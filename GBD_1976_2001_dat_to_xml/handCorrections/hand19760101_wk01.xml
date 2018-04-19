@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>03994019</WKU>
+        <APD>19741125</APD>
+        <ISD>19761023</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Sagishima</LN>
+                        <FN>Takayuki</FN>
+                        <CTY>Suita</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+                <INVT>
+                        <LN>Kitani</LN>
+                        <FN>Teruo</FN>
+                        <CTY>Takatsuki</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+                <INVT>
+                        <LN>Sasaki</LN>
+                        <FN>Reiichi</FN>
+                        <CTY>Hirakata</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>Matsushita Electric Industrial Co., Ltd.</NAM>
+                        <CNT>JPX</CNT>
+                        <COD>03</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>

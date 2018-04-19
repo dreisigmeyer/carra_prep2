@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>03994019</WKU>
+        <APD>19741125</APD>
+        <ISD>19761023</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Sagishima</LN>
+                        <FN>Takayuki</FN>
+                        <CTY>Suita</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+                <INVT>
+                        <LN>Kitani</LN>
+                        <FN>Teruo</FN>
+                        <CTY>Takatsuki</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+                <INVT>
+                        <LN>Sasaki</LN>
+                        <FN>Reiichi</FN>
+                        <CTY>Hirakata</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>Matsushita Electric Industrial Co., Ltd.</NAM>
+                        <CNT>JPX</CNT>
+                        <COD>03</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>04181074</WKU>
+        <APD>19760723</APD>
+        <ISD>19800101</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Hieb</LN>
+                        <FN>Arthur J</FN>
+                        <CTY>Rupert</CTY>
+                        <STA>ID</STA>
+                </INVT>
+        </INVTS>
+</PATN>
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>04195684</WKU>
+        <APD>19771215</APD>
+        <ISD>19800401</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Tsuchida</LN>
+                        <FN>Yutaka</FN>
+                        <CTY>Yokosuka</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>Ishikawajima-Harima Jukogyo Kabushiki Kaisha</NAM>
+                        <CNT>JPX</CNT>
+                        <COD>03</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>04220594</WKU>
+        <APD>19781010</APD>
+        <ISD>19800902</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Sprague</LN>
+                        <FN>Peter W.</FN>
+                        <CTY>Pennington</CTY>
+                        <STA>NJ</STA>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>E. R. Squibb and Sons, Inc.</NAM>
+                        <CTY>Princeton</CTY>
+                        <STA>NJ</STA>
+                        <COD>02</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>04461003</WKU>
+        <APD>19810603</APD>
+        <ISD>19840717</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Tamaki</LN>
+                        <FN>Kazuyoshi</FN>
+                        <CTY>Nagoya</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>Nippondenso Co., Ltd.</NAM>
+                        <CNT>JPX</CNT>
+                        <COD>03</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>05618676</WKU>
+        <APD>19950607</APD>
+        <ISD>19970408</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Hitzeman</LN>
+                        <FN>Ronald A.</FN>
+                        <CTY>Pacifica</CTY>
+                        <STA>CA</STA>
+                </INVT>
+                <INVT>
+                        <LN>Hagie, IV</LN>
+                        <FN>Franklin E.</FN>
+                        <CTY>Foster City</CTY>
+                        <STA>CA</STA>
+                </INVT>
+                <INVT>
+                        <LN>Hall</LN>
+                        <FN>Benjamin D.</FN>
+                        <CTY>Bellevue</CTY>
+                        <STA>WA</STA>
+                </INVT>
+                <INVT>
+                        <LN>Ammerer</LN>
+                        <FN>Gustav</FN>
+                        <CTY>Seattle</CTY>
+                        <STA>WA</STA>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>Genentech, Inc.</NAM>
+                        <CTY>So. San Francisco</CTY>
+                        <STA>CA</STA>
+                        <COD>02</COD>
+                </ASSG>
+                <ASSG>
+                        <NAM>Washington Research Foundation</NAM>
+                        <CTY>Seattle</CTY>
+                        <STA>WA</STA>
+                        <COD>02</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>

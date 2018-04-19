@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                                                                        
+<PATN>                                                                                                                                                                                                                                                                        
+        <WKU>04461003</WKU>
+        <APD>19810603</APD>
+        <ISD>19840717</ISD>
+        <INVTS>
+                <INVT>
+                        <LN>Tamaki</LN>
+                        <FN>Kazuyoshi</FN>
+                        <CTY>Nagoya</CTY>
+                        <CNT>JPX</CNT>
+                </INVT>
+        </INVTS>
+        <ASSGS>
+                <ASSG>
+                        <NAM>Nippondenso Co., Ltd.</NAM>
+                        <CNT>JPX</CNT>
+                        <COD>03</COD>
+                </ASSG>
+        </ASSGS>
+</PATN>
