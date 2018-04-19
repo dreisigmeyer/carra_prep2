@@ -37,7 +37,7 @@ sub process02to04 {
     `sed -i -r 's_(<CUSTOM-CHARACTER FILE[^>]*>)_<!--\\1-->_g' $FOLDER_PATH/$XML_FILE_NAME`;
 }
 
-my @inFileNames = `find ./inData -type f -name "*.zip" -printf "%f\n"`;
+my @inFileNames = `find ./inData/ -type f -name "*.zip" -printf "%f\n"`;
 foreach (@inFileNames) {
     chomp;
     my $FILE = $_;
