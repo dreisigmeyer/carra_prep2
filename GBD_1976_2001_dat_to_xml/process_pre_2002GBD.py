@@ -33,7 +33,7 @@ def clean_patnum(patnum):
 def clean_it(in_str):
     out_str = in_str.replace("&", "and")
     #out_str = re.sub('[^a-zA-Z0-9 ]+', '', out_str)
-    return out_str
+    return out_str.strip()
 
 def convert_to_xml(in_file):
     """
@@ -73,6 +73,8 @@ def convert_to_xml(in_file):
             except Exception:
                 print "Offending line is : " + dat_file.next()
                 continue
+            if outer_line.startswith(' '): # longer names etc are split across lines
+                continue
             outer_line = clean_it(outer_line)
             try:
                 outer_key, outer_val = map(unicode.strip, outer_line.split(' ', 1))
@@ -108,6 +110,8 @@ def convert_to_xml(in_file):
                     INVT_str += '\t\t\t<LN>' + ln + '</LN>\n'
                     INVT_str += '\t\t\t<FN>' + fn + '</FN>\n'
                 for inner_line in dat_file:
+                    if inner_line.startswith(' '): # longer names etc are split across lines
+                        continue
                     inner_line = clean_it(inner_line)
                     try:
                         inner_key, inner_val = map(unicode.strip, inner_line.split(' ', 1))
@@ -143,6 +147,8 @@ def convert_to_xml(in_file):
                 elif outer_key == 'COD':
                     ASSG_str += '\t\t\t<COD>' + outer_val + '</COD>\n'
                 for inner_line in dat_file:
+                    if inner_line.startswith(' '): # longer names etc are split across lines
+                        continue
                     inner_line = clean_it(inner_line)
                     try:
                         inner_key, inner_val = map(unicode.strip, inner_line.split(' ', 1))
