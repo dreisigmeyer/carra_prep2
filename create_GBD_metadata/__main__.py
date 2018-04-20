@@ -31,14 +31,12 @@ post_offices/
 """.format(BD = base_dir)
 os.system(parse_post_offices)
 
-'''
 parser = """
 python -m {BD}.pythonCode.zip3Data.parser \
 sparql_query_results.csv \
 infobox_properties_en.nt
 """.format(BD = base_dir)
 os.system(parser)
-'''
 
 zip3_cities = """
 python -m {BD}.pythonCode.zip3Data.zip3_cities
