@@ -132,6 +132,10 @@ def get_info(files):
             path_applicants_alt2 = "us-bibliographic-data-grant/us-parties/us-applicants/"
             path_applicants = ""
             rel_path_applicants_state = "addressbook/address/state"
+            path_inventors_alt1 = "us-bibliographic-data-grant/parties/inventors/"
+            path_inventors_alt2 = "us-bibliographic-data-grant/us-parties/inventors/"
+            path_inventors = ""
+            rel_path_inventors_state = "addressbook/address/state"
         elif 2001 < grant_year_GBD < 2005:
             # Theses paths are for 2002 - 2004
             path_patent_number = "SDOBI/B100/B110/DNUM/PDAT"
@@ -211,6 +215,24 @@ def get_info(files):
                                 break
                         except Exception: # not a US inventor
                             continue
+            if grant_year_GBD > 2004: # USPTO changing their way of entering information
+                if root.find(path_inventors_alt1) is not None:
+                    path_inventors = path_inventors_alt1
+                elif root.find(path_inventors_alt2) is not None:
+                    path_inventors = path_inventors_alt2
+                    
+                if path_inventors:
+                    inventors = root.findall(path_inventors)
+                    if inventors:
+                        for inventor in inventors:
+                            inventor_state = ''
+                            try:
+                                inventor_state = inventor.find(rel_path_inventors_state).text
+                                if inventor_state:
+                                    us_inventor = 1
+                                    break
+                            except Exception: # not a US inventor
+                                continue
             csv_line = []
             csv_line.append(xml_patent_number)
             csv_line.append(grantYear)
