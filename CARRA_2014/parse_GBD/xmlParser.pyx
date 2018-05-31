@@ -273,6 +273,7 @@ def zip3_thread(file):
         try:
             xmlDoc_thread(xmlDoc, grant_year_GBD)
         except Exception:
+            print("---- Problem with file " + file + " in xmlDoc " + xmlDoc)
             pass
     # Clean things up
     os.system("rm -rf " + folder_path)

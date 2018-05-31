@@ -58,6 +58,8 @@ foreach (@inFileNames) {
     remove_tree($FOLDER_PATH . "/" . $XML_FILE_NAME);
 
     my @fileNames = `find $FOLDER_PATH -type f -name "*.xml"`;
+
+    print "---- Processing file $FILE\n"; # This was only to track down UT-8 issues
     foreach (@fileNames) {
         chomp;
         my $fileName = $_;
