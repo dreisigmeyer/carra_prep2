@@ -1,2 +1,2 @@
-AllNames_*.txt filter=lfs diff=lfs merge=lfs -text
+AllNames_*.txt.bz2 filter=lfs diff=lfs merge=lfs -text
 infobox_properties_en.nt.bz2 filter=lfs diff=lfs merge=lfs -text
