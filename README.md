@@ -1,3 +1,10 @@
+---- 
+If you have just pulled this for the first time you will need to run
+bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2
+from this directory
+----
+
+
 * GBD_1976_2001_dat_to_xml/process_pre_2002GBD.py will process any
 pre-2002 patents in the dat format.  The resulting XML files will be placed
 into python_validation/inData.  This likely won't need to be done 
