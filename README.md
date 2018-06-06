@@ -1,4 +1,6 @@
 ---- 
+You need git-lfs installed to correctly pull large files down.
+
 If you have just pulled this for the first time you will need to run
 bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2
 from this directory
