@@ -1,22 +1,22 @@
 ---- 
 You need git-lfs installed to correctly pull large files down.
 ----
-If you don't have git-lfs you'll need to download:
-1) http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2
+1) If you don't have git-lfs you'll need to download:
+a) http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2
 unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). DBPedia
 changed the name from earlier releases.  Put the file into
 	create_GBD_metadata/pythonCode/zip3Data/
 This is the latest version that works with the code.  DBPedia switched to ttl 
 format after the 2015-04 release.
-2) The "All Names" file from the Topical Gazetteers from 
+b) The "All Names" file from the Topical Gazetteers from 
 	https://geonames.usgs.gov/domestic/download_data.htm
 Unzip it and place it in
 	create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/
 
-If you do have git-lfs and pulled this for the first time:
+2) If you do have git-lfs and pulled this for the first time:
 From this directory you'll need to run
-	* bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2
-	* bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2
+* bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2
+* bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2
 If the bzip files change you'll need to rerun this.
 
 
