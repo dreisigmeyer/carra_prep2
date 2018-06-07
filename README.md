@@ -21,9 +21,10 @@
 	The original dat files (1976-2001 as YYYY.zip) are available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
+	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_
 	In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
 	`nohup ./runit &`  
-	The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml/outData/_ will be placed into _python\_validation/inData_.
+	The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml/outData/_ will be placed into _python\_validation/inData/_.
 
 2.	_create\_GBD\_metadata_ is run to generate XML files
 	for attaching zip3s, correcting city-state information, etc.
@@ -39,14 +40,14 @@
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	The file names are of the form _pgbYYYYMMDD_wkXX.zip_ or _ipgbYYYYMMDD_wkXX.zip_.
-	Place the download files into _python\_validation/inData/_ alongside the XML files from the _GBD\_1976\_2001\_dat\_to\_xml_ step above.
+	Place the downloaded files into _python\_validation/inData/_ alongside the XML files from the _GBD\_1976\_2001\_dat\_to\_xml_ step above.
 	DTD files are also in the USPTO download sites.
-	All necessary DTD, HTML, etc files are included as of 7 Jun 18.
+	All necessary DTD, ent, etc files are included as of 7 Jun 18.
 	Place any new DTD files into _python\_validation/DTDs_ as well as _CARRA\_2014/parse_GBD/_.
 	The created XML files were also validated but this was turned off because there were too many issues with the USPTO XML files.  
 	In _python\_validation/_ run:  
 	`nohup ./runit &`  
-	Copy the files in _python\_validation/outData_ to _CARRA\_2014/inData/_ and _patent\_metadata/inData/_.
+	Copy the files in _python\_validation/outData/_ to _CARRA\_2014/inData/_ and _patent\_metadata/inData/_.
 
 4.	_CARRA\_2014_ prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
