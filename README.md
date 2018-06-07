@@ -3,18 +3,16 @@
 * http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2 
 unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). 
 DBPedia changed the name from earlier releases.
-Put the file into  
-_create_GBD_metadata/pythonCode/zip3Data/_  
+Put the file into _create_GBD_metadata/pythonCode/zip3Data/_.
 This is the latest version that works with the code.
 DBPedia switched to ttl format after the 2015-04 release.
 * The "All Names" file from the Topical Gazetteers from 
 https://geonames.usgs.gov/domestic/download_data.htm.
-Unzip it and place it in  
-_create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/_
+Unzip it and place it in _create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/_.
 
 2. If you do have git-lfs and pulled this for the first time from this directory you'll need to run  
-_bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2_  
-_bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2_  
+`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`  
+`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
 If the bzip files change you'll need to rerun this.
 
 ## Running the code
@@ -31,7 +29,7 @@ The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml_ will be placed into _
 for attaching zip3s, correcting city-state information, etc.
 From this directory issue  
 `nohup python -m create_GBD_metadata &`  
-The files  
+The files
 * ASCII_zip3_cities.xml
 * cityMispellings.xml
 * inventors.xml  
@@ -51,7 +49,7 @@ In _python\_validation/_ run:
 Copy the files in _python\_validation/outData_ to _CARRA\_2014/inData/_ and _patent\_metadata/inData/_.
 
 4. _CARRA\_2014_ prepares the inventor data to be shipped to CARRA for PIKing.
-In particular, this attempts to:  
+In particular, this attempts to:
 * correct any misspellings of the city and/or state;
 * assign prior city and states to inventors;
 * attach zip3s to the inventors' cities.  
