@@ -52,7 +52,8 @@ Copy the files in _python\_validation/outData_ to _CARRA\_2014/inData/_ and _pat
 In particular, this attempts to:
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
-	* attach zip3s to the inventors' cities.  
+	* attach zip3s to the inventors' cities.
+
 In _CARRA\_2014_ run:  
 `nohup ./run_it.sh &`  
 The reulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for PIKing.
