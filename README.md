@@ -29,10 +29,10 @@ The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml_ will be placed into _
 for attaching zip3s, correcting city-state information, etc.
 From this directory issue  
 `nohup python -m create_GBD_metadata &`  
-The files
-* ASCII_zip3_cities.xml
-* cityMispellings.xml
-* inventors.xml  
+The files 
+_ASCII\_zip3\_cities.xml_, 
+_cityMispellings.xml_ and 
+_inventors.xml_
 are copied into _CARRA\_2014/parse\_GBD/_.
 
 3. _python\_validation_ creates valid XML documents from the original XML files (2002-present) available at 
