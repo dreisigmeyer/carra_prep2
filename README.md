@@ -1,13 +1,13 @@
 ## Getting the data
-1. If you don't have git-lfs you'll need to download:  
-* http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2  
+1. If you don't have git-lfs you'll need to download:
+* http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2 
 unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). DBPedia
 changed the name from earlier releases.  Put the file into  
 _create_GBD_metadata/pythonCode/zip3Data/_  
 This is the latest version that works with the code.  DBPedia switched to ttl 
 format after the 2015-04 release.
-* The "All Names" file from the Topical Gazetteers from  
-https://geonames.usgs.gov/domestic/download_data.htm  
+* The "All Names" file from the Topical Gazetteers from 
+https://geonames.usgs.gov/domestic/download_data.htm.
 Unzip it and place it in  
 _create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/_
 
