@@ -15,6 +15,11 @@
 	`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
 
+## Setting up the Python environment
+Included is an _environment.yml_ file that you can use with Anaconda to set up a Python virtual environment using  
+`conda env create -f environment.yml`  
+More information is available at https://conda.io/docs/user-guide/tasks/manage-environments.html.
+
 ## Running the code
 1.	_GBD\_1976\_2001\_dat\_to\_xml_ will process any
 	pre-2002 patents in the dat format.
