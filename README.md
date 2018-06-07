@@ -16,16 +16,16 @@ Unzip it and place it in _create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/
 If the bzip files change you'll need to rerun this.
 
 ## Running the code
-1. _GBD\_1976\_2001\_dat\_to\_xml/process\_pre\_2002GBD.py_ will process any
+1. _GBD\_1976\_2001\_dat\_to\_xml_ will process any
 pre-2002 patents in the dat format.
 The original dat files (1976-2001 as YYYY.zip) are available at 
 https://bulkdata.uspto.gov/
 under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
 `nohup ./runit &`  
-The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml_ will be placed into _python\_validation/inData_.
+The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml/outData/_ will be placed into _python\_validation/inData_.
 
-2. _create\_GBD\_metadata/\_\_main\_\_.py_ is run to generate XML files
+2. _create\_GBD\_metadata_ is run to generate XML files
 for attaching zip3s, correcting city-state information, etc.
 From this directory issue  
 `nohup python -m create_GBD_metadata &`  
@@ -50,12 +50,12 @@ Copy the files in _python\_validation/outData_ to _CARRA\_2014/inData/_ and _pat
 
 4. _CARRA\_2014_ prepares the inventor data to be shipped to CARRA for PIKing.
 In particular, this attempts to:
-* correct any misspellings of the city and/or state;
-* assign prior city and states to inventors;
-* attach zip3s to the inventors' cities.  
+	* correct any misspellings of the city and/or state;
+	* assign prior city and states to inventors;
+	* attach zip3s to the inventors' cities.
 In _CARRA\_2014_ run:  
 `nohup ./run_it.sh &`  
-The reulting files in _CARRA\_2014/outData_ are post-processed and then sent to CARRA for PIKing.
+The reulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for PIKing.
 
 5. _patent\_metadata_ collects some basic information about each patent.
 In _patent\_metadata_ run:  
