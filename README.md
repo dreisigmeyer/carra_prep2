@@ -15,8 +15,8 @@ Unzip it and place it in
 
 If you do have git-lfs and pulled this for the first time:
 From this directory you'll need to run
-	bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2
-	bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2
+	* bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2
+	* bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2
 If the bzip files change you'll need to rerun this.
 
 
@@ -29,12 +29,12 @@ again.
 for attaching zip3s, correcting city-state informatuion etc:
         nohup python -m create_GBD_metadata &
 Updated USPTO DVD files are placed in 
--> create_GBD_metadata/pythonCode/usptoData
--> assignee/assignee_information_mp
+- create_GBD_metadata/pythonCode/usptoData
+- assignee/assignee_information_mp
 This likely won't need to be done (often).
 NOTE: This requires USPTO DVD files, e.g.,:
--INV_COUNTY_00_13.TXT
--INVENTOR_14.TXT
+- INV_COUNTY_00_13.TXT
+- INVENTOR_14.TXT
 
 1)
 * USPTO bulk download files into python_validation/inData
@@ -42,9 +42,9 @@ NOTE: This requires USPTO DVD files, e.g.,:
 * In python_validation/ run: 
 nohup ./runit &
 * Copy the files in python_validation/outData to
--> CARRA_20YY/inData
--> patent_metadata/inData
--> assignee/assignee_information_mp/inData
+- CARRA_20YY/inData
+- patent_metadata/inData
+- assignee/assignee_information_mp/inData
 
 2)
 * In CARRA_20YY do
