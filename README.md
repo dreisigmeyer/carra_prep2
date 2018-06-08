@@ -21,15 +21,16 @@ Included is an _environment.yml_ file that you can use with Anaconda to set up a
 More information is available at https://conda.io/docs/user-guide/tasks/manage-environments.html.
 
 ## Running the code
-1.	_GBD\_1976\_2001\_dat\_to\_xml_ will process any
-	pre-2002 patents in the dat format.
+1.	_GBD\_1976\_2001\_dat\_to\_xml_ will process any pre-2002 patents in the dat format.
 	The original dat files (1976-2001 as YYYY.zip) are available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_
 	In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
 	`nohup ./runit &`  
-	The resulting XML files in _GBD\_1976\_2001\_dat\_to\_xml/outData/_ will be placed into _python\_validation/inData/_.
+	In the directory _GBD\_1976\_2001\_dat\_to\_xml/outData/_ issue the command  
+	`ls *.xml | xargs -n1 -i zip {}.zip {}`  
+	and place the resulting zip files into _python\_validation/inData/_.
 
 2.	_create\_GBD\_metadata_ is run to generate XML files
 	for attaching zip3s, correcting city-state information, etc.
