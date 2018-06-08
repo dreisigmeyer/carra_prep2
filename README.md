@@ -31,7 +31,7 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_
 	In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
-	`nohup ./runit &`  
+	`nohup ./runit.sh &`  
 	In the directory _GBD\_1976\_2001\_dat\_to\_xml/outData/_ issue the command  
 	`ls *.xml | xargs -n1 -i zip {}.zip {}`  
 	and place the resulting zip files into _python\_validation/inData/_.
