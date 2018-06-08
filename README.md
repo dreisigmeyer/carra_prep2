@@ -13,8 +13,8 @@
 	These files are placed in _create_GBD_metadata/pythonCode/usptoData/_.
 
 2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to run  
-    `bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`
-    `bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`  
+    `bzip2 -d create_GBD_metadata/pythonCode/usptoData/INV_COUNTY_00_15.TXT.bz2`  
+    `bzip2 -d create_GBD_metadata/pythonCode/usptoData/INVENTOR_15.TXT.bz2`  
 	`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`  
 	`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
