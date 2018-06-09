@@ -50,6 +50,7 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	The file names are of the form _pgbYYYYMMDD_wkXX.zip_ or _ipgbYYYYMMDD_wkXX.zip_.
+	The included script _get\_uspto\_data.sh_ will download all the required zip files from the USPTO website.
 	Place the downloaded files into _python\_validation/inData/_ alongside the XML files from the _GBD\_1976\_2001\_dat\_to\_xml_ step above.
 	DTD files are also in the USPTO download sites.
 	All necessary DTD, ent, etc files are included as of 7 Jun 18.
