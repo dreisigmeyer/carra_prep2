@@ -9,7 +9,7 @@
 	* The "All Names" file from the Topical Gazetteers from 
 	https://geonames.usgs.gov/domestic/download_data.htm.
 	Unzip it and place it in _create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/_.
-	* The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_15.TXT_ files from the USPTO's patent data DVD.
+	* The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
 	These files are placed in _create_GBD_metadata/pythonCode/usptoData/_.
 
 2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to run  
