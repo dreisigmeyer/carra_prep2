@@ -15,9 +15,11 @@ FEATURE_ID|FEATURE_NAME
 Permanent, unique feature record identifier and official feature name as defined in INCITS 446-2008
 ** FEATURE_NAME:	
 Permanent official feature name as defined in INCITS 446-2008 as well as alternate spellings
+
 """
+#awk -F'|' -v OFS='|' '{print $1, $2}' AllNames_*.txt > alternate_names.csv && \ # replace with cut
 alias_cmd = """
-awk -F'|' -v OFS='|' '{print $1, $2}' AllNames_* > alternate_names.csv && \
+cut -d'|' -f1,2 AllNames_*.txt > alternate_names.csv && \
 sed -i '1d' alternate_names.csv && \
 sed -i 's/Census Designated Place//g' alternate_names.csv
 """

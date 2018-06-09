@@ -48,8 +48,12 @@ def convert_to_xml(in_file):
     out_file_name = 'outData/abcd' + in_file_yr + '0101_wk00.xml' # fake name
     out_file = codecs.open(out_file_name, 'w', 'utf8')
     
-    awk_cmd = "awk '/^PATN/{filename=NR\".dat\"; count=0;}; {count++; if (count > 1) print > \"" + folder_path + "\"filename}' "            
-    os.system(awk_cmd + in_file)
+    #awk_cmd = "awk '/^PATN/{filename=NR\".dat\"; count=0;}; {count++; if (count > 1) print > \"" + folder_path + "\"filename}' "
+    #os.system(awk_cmd + in_file)
+    os.chdir(folder_path)
+    csplit_cmd = "csplit -sz --suppress-match -f '' -b '%d.dat' ../" + in_file + " '/PATN/' '{*}'"         
+    os.system(csplit_cmd)
+    os.chdir("..")
     datSplit = glob.glob(folder_path + "*.dat")
 
     xml_line = '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -71,7 +75,7 @@ def convert_to_xml(in_file):
             except StopIteration:
                 break
             except Exception:
-                print "Offending line is : " + dat_file.next()
+                #print("Offending line is : " + dat_file.next())
                 continue
             if outer_line.startswith(' '): # longer names etc are split across lines
                 continue
