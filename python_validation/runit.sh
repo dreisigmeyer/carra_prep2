@@ -23,8 +23,9 @@ for FILE in "$HERE"/holdData/*.zip; do
     cd "$FOLDER_PATH"
     cp -r "$HERE"/DTDs/* "$FOLDER_PATH"
     clean_dtds ./\*.dtd ./ST32-US-Grant-025xml.dtd
-    zip -r "$HERE/outData/$FILE_NAME" ./*
+    zip -q -r "$HERE/outData/$FILE_NAME" ./*
 done
 
 cd "$HERE"
 rm -rf "$HERE"/holdData/*
+

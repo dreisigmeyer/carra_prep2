@@ -12,7 +12,8 @@
 	* The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
 	These files are placed in _create_GBD_metadata/pythonCode/usptoData/_.
 
-2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to run  
+2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to 
+    run  
     `bzip2 -d create_GBD_metadata/pythonCode/usptoData/INV_COUNTY_00_15.TXT.bz2`  
     `bzip2 -d create_GBD_metadata/pythonCode/usptoData/INVENTOR_15.TXT.bz2`  
 	`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`  
@@ -20,7 +21,8 @@
 	If the bzip files change you'll need to rerun this.
 
 ## Setting up the Python environment
-Included is an _environment.yml_ file that you can use with Anaconda to set up a Python virtual environment using  
+Included is an _environment.yml_ file that you can use with Anaconda to set up a Python virtual 
+environment using  
 `conda env create -f environment.yml`  
 More information is available at https://conda.io/docs/user-guide/tasks/manage-environments.html.
 
@@ -29,7 +31,7 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	The original dat files (1976-2001 as YYYY.zip) are available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
-	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_
+	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_.
 	In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
 	`nohup ./runit.sh &`  
 	In the directory _GBD\_1976\_2001\_dat\_to\_xml/outData/_ issue the command  
@@ -38,7 +40,7 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 
 2.	_create\_GBD\_metadata_ is run to generate XML files
 	for attaching zip3s, correcting city-state information, etc.
-	From this directory issue  
+	From this directory (i.e., where this README file is located at) issue the command  
 	`nohup python -m create_GBD_metadata &`  
 	The files 
 	_ASCII\_zip3\_cities.xml_, 
@@ -46,19 +48,24 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	_inventors.xml_
 	are copied into _CARRA\_2014/parse\_GBD/_.
 
-3.	_python\_validation_ creates valid XML documents from the original XML files (2002-present) available at 
+3.	_python\_validation_ creates valid XML documents from the original XML files (2002-present) 
+    available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	The file names are of the form _pgbYYYYMMDD_wkXX.zip_ or _ipgbYYYYMMDD_wkXX.zip_.
-	The included script _get\_uspto\_data.sh_ will download all the required zip files from the USPTO website.
-	Place the downloaded files into _python\_validation/inData/_ alongside the XML files from the _GBD\_1976\_2001\_dat\_to\_xml_ step above.
+	The included script _get\_uspto\_data.sh_ will download all the required zip files from the 
+	    USPTO website.
+	Place the downloaded files into _python\_validation/inData/_ alongside the XML files from the 
+    _GBD\_1976\_2001\_dat\_to\_xml_ step above.
 	DTD files are also in the USPTO download sites.
 	All necessary DTD, ent, etc files are included as of 7 Jun 18.
 	Place any new DTD files into _python\_validation/DTDs_ as well as _CARRA\_2014/parse_GBD/_.
-	The created XML files were also validated but this was turned off because there were too many issues with the USPTO XML files.  
+	The created XML files were also validated but this was turned off because there were too many 
+	issues with the USPTO XML files.
 	In _python\_validation/_ run:  
 	`nohup ./runit &`  
-	Copy the files in _python\_validation/outData/_ to _CARRA\_2014/inData/_ and _patent\_metadata/inData/_.
+	Copy the files in _python\_validation/outData/_ to _CARRA\_2014/inData/_ and 
+	_patent\_metadata/inData/_.
 
 4.	_CARRA\_2014_ prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
@@ -68,7 +75,8 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 
 	In _CARRA\_2014_ run:  
 	`nohup ./run_it.sh &`  
-	The reulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for PIKing.
+	The reulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for 
+	PIKing.
 
 5.	_patent\_metadata_ collects some basic information about each patent.
 	In _patent\_metadata_ run:  

@@ -3,7 +3,8 @@
 use strict;
 use warnings;
 
-use PerlModules::HtmlEntities;
+use lib 'PerlModules';
+use HtmlEntities;
 use File::Path qw(make_path remove_tree);
 
 =begin
@@ -18,6 +19,7 @@ sub decToHex {
 }
 
 sub entToHex {
+   my %htmlEntities;
    exists $htmlEntities{$_[0]} ? $htmlEntities{$_[0]} : '&' . $_[0] . ';'
 }
 
@@ -53,9 +55,14 @@ foreach (@inFileNames) {
 
     process02to04($FOLDER_PATH, $XML_FILE_NAME);
     
-    `awk -v folderpath=$FOLDER_PATH '/^<\\?xml/{filename=i++\".xml\";}
-    {print > folderpath\"/\"filename;}' $FOLDER_PATH/$XML_FILE_NAME`;
-    remove_tree($FOLDER_PATH . "/" . $XML_FILE_NAME);
+    #`awk -v folderpath=$FOLDER_PATH '/^<\\?xml/{filename=i++\".xml\";}
+    #{print > folderpath\"/\"filename;}' $FOLDER_PATH/$XML_FILE_NAME`;
+    #remove_tree($FOLDER_PATH . "/" . $XML_FILE_NAME);
+    chdir $FOLDER_PATH;
+    `csplit -sz -f '' -b '%d.xml' $XML_FILE_NAME '/^<?xml/' '{*}'`;
+    unlink $XML_FILE_NAME;
+    chdir "../../";
+
 
     my @fileNames = `find $FOLDER_PATH -type f -name "*.xml"`;
 

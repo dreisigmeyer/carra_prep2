@@ -32,8 +32,8 @@ for directory in glob.glob('holdData/*'):
         
         try:
             holder = etree.parse(xml_file, ill_formed_validator)
-        except Exception, e:
-            print "ill-formed xml document " + xml_file + ' : ' + str(e)
+        except Exception as e:
+            print("ill-formed xml document " + xml_file + " : " + str(e))
             os.rename(xml_file, ill_formed_xml_dir + file_name)
             continue
         else:
