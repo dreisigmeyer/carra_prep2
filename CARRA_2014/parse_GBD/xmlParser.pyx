@@ -16,7 +16,7 @@ All of the date formats are expected to be %Y%m%d
 Created by David W. Dreisigmeyer 22 Oct 15
 """
 
-import codecs, csv, glob, os, re, sys, unicodedata, urllib, uuid
+import codecs, csv, glob, os, re, sys, unicodedata, urllib, uuid, zipfile
 from HTMLParser import HTMLParser
 from lxml import etree
 from datetime import datetime
@@ -165,20 +165,21 @@ def split_name_suffix(in_name):
             return last_nm, holder[2]
     else:
         return in_name, ''
+
 """
-This xml file is created using the free-zipcode-database.csv data taken from:
+The following global variables are set in assign_zip3 below
+
+zip3_XML is created using the free-zipcode-database.csv data taken from:
 federalgovernmentzipcodes.us
-"""
-zip3_XML = etree.parse(cw_dir + "/ASCII_zip3_cities.xml")
-"""
-This xml file is created using the hand cleaned data from the USPTO DVD:
+
+cleaned_city_XML is created using the hand cleaned data from the USPTO DVD:
 INV_COUNTY_XX_YY.TXT
+
+inventor_names_XML is created using INVENTOR_XX.TXT file taken from the USPTO DVD.
 """
-cleaned_city_XML = etree.parse(cw_dir + "/cityMisspellings.xml")
-"""
-This xml file is created using INVENTOR_XX.TXT file taken from the USPTO DVD.
-"""
-inventor_names_XML = etree.parse(cw_dir + "/inventors.xml")
+zip3_XML = None
+cleaned_city_XML = None
+inventor_names_XML = None
 
 def get_zip3(applicant_state, 
         applicant_city, 
@@ -250,18 +251,32 @@ dateFormat = '%Y%m%d' # The dates are expected in %Y%m%d format
 grant_year_re = re.compile('[a-z]{3,4}([0-9]{8})_wk[0-9]{2}') 
 
 def assign_zip3(files):
-    for file in files:
+    global zip3_XML
+    global cleaned_city_XML
+    global inventor_names_XML
+    print("Loading XML files...")
+    zip3_XML = etree.parse(cw_dir + "/ASCII_zip3_cities.xml")
+    print("Loaded zip3 file")
+    cleaned_city_XML = etree.parse(cw_dir + "/cityMisspellings.xml")
+    print("Loaded city misspellings file")
+    inventor_names_XML = etree.parse(cw_dir + "/inventors.xml")
+    print("Loaded inventors file")
+
+    for in_file in files:
         try:
-            zip3_thread(file)
+            zip3_thread(in_file)
         except Exception:
             pass
         
-def zip3_thread(file):            
-    folder_name = os.path.splitext(os.path.basename(file))[0]    
+def zip3_thread(in_file):            
+    folder_name = os.path.splitext(os.path.basename(in_file))[0]    
     # Get data in and ready
     folder_path = cw_dir + "/holdData/" + folder_name + "/"
-    os.system("mkdir " + folder_path)
-    os.system("unzip -qq -o " + file + " -d " + folder_path)
+    os.umask(0002)
+    os.mkdir(folder_path)
+    zipped_file = zipfile.ZipFile(in_file, 'r')
+    zipped_file.extractall(folder_path)
+    zipped_file.close()
     #xml_file_name = glob.glob(folder_path + "*.xml")[0]
     #awk_cmd = "awk '/^<\?xml.*encoding=/{filename=NR\".xml\"; count=0;}; {count++; if (count > 1) print > \"" + folder_path + "\"filename}' "        
     #os.system(awk_cmd + xml_file_name)
@@ -273,7 +288,7 @@ def zip3_thread(file):
         try:
             xmlDoc_thread(xmlDoc, grant_year_GBD)
         except Exception:
-            print("---- Problem with file " + file + " in xmlDoc " + xmlDoc)
+            print("---- Problem with file " + in_file + " in xmlDoc " + xmlDoc)
             pass
     # Clean things up
     os.system("rm -rf " + folder_path)

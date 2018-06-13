@@ -71,7 +71,10 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	In particular, this attempts to:
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
-	* attach zip3s to the inventors' cities.
+	* attach zip3s to the inventors' cities.  
+	This lauches the number of threads specified in _\_\_main.py\_\__  
+	`NUMBER_OF_PROCESSES = 5`  
+	which you can change by editing that file.
 
 	In _CARRA\_2014_ run:  
 	`nohup ./run_it.sh &`  
@@ -81,7 +84,7 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 5.	_patent\_metadata_ collects some basic information about each patent.
 	In _patent\_metadata_ run:  
 	`nohup ./run_it.sh &`  
-	which calls _./create\_patent\_metadata.py 10_ where 10 is the number of processes to run.
+	which calls _./create\_patent\_metadata.py 5_ where 5 is the number of processes to run.
 	You can change the processor count by editing the _run\_it.sh_ file.
 	The final _prdn\_metadata.csv_ file is used later for triangulation.
 
