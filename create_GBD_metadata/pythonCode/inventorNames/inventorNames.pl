@@ -6,7 +6,7 @@
 use strict;
 use warnings;
 
-my $outFile = 'inventors.xml';
+my $outFile = '../../inventors.json';
 my @rawData = glob '../usptoData/INVENTOR_*';
 my %hash;
 
@@ -53,24 +53,48 @@ while ( my $line = <DATA> ) {
 close DATA;
 
 open(my $fh, '>', $outFile) or die "Cannot open: $!";
-print $fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-print $fh "<inventors>\n";
+# print $fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+# print $fh "<inventors>\n";
+# foreach my $last (sort keys %hash ) {
+#     print $fh "\t<lastName abbrev=\"$last\">\n";
+#     foreach my $first (sort keys %{ $hash{$last} }) {
+# 	print $fh "\t\t<firstName abbrev=\"$first\">\n";
+# 	foreach my $mi (sort keys %{ $hash{$last}{$first} }) {
+# 	    print $fh "\t\t\t<middleInitial abbrev=\"$mi\">\n";
+# 	    foreach my $city (sort keys %{ $hash{$last}{$first}{$mi} }) {
+# 		foreach my $state (sort keys %{ $hash{$last}{$first}{$mi}{$city} }) {
+# 		    print $fh "\t\t\t\t<location city=\"$city\" state=\"$state\"></location>\n";
+# 		}
+# 	    }
+# 	    print $fh "\t\t\t</middleInitial>\n";
+# 	}
+# 	print $fh "\t\t</firstName>\n";
+#     }
+#     print $fh "\t</lastName>\n";
+# }
+# print $fh "</inventors>";
+print $fh "{";
 foreach my $last (sort keys %hash ) {
-    print $fh "\t<lastName abbrev=\"$last\">\n";	
+    print $fh "\n\t\"$last\":{";
     foreach my $first (sort keys %{ $hash{$last} }) {
-	print $fh "\t\t<firstName abbrev=\"$first\">\n";
-	foreach my $mi (sort keys %{ $hash{$last}{$first} }) {
-	    print $fh "\t\t\t<middleInitial abbrev=\"$mi\">\n";
-	    foreach my $city (sort keys %{ $hash{$last}{$first}{$mi} }) {
-		foreach my $state (sort keys %{ $hash{$last}{$first}{$mi}{$city} }) {
-		    print $fh "\t\t\t\t<location city=\"$city\" state=\"$state\"></location>\n";
-		}
-	    }
-	    print $fh "\t\t\t</middleInitial>\n";
-	}
-	print $fh "\t\t</firstName>\n";
+        print $fh "\n\t\t\"$first\":{";
+        foreach my $mi (sort keys %{ $hash{$last}{$first} }) {
+            print $fh "\n\t\t\t\"$mi\":[";
+            my $outline = "";
+            foreach my $city (sort keys %{ $hash{$last}{$first}{$mi} }) {
+                foreach my $state (sort keys %{ $hash{$last}{$first}{$mi}{$city} }) {
+                    $outline .= "{\"city\":\"$city\", \"state\":\"$state\"},";
+                }
+            }
+            chop($outline);
+            print $fh "$outline],";
+        }
+        seek( $fh, -1, 1);
+        print $fh "\n\t\t},";
     }
-    print $fh "\t</lastName>\n";
+    seek( $fh, -1, 1);
+    print $fh "\n\t},";
 }
-print $fh "</inventors>";
+seek( $fh, -1, 1);
+print $fh "\n}\n";
 close $fh

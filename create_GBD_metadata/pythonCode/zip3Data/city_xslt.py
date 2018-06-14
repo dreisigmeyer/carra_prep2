@@ -170,7 +170,7 @@ for k, v in synonyms.iteritems():
     root.extend(cleaned_xml.getroot())
 
 simplified_doc = xslt_simplify(root.getroottree())
-out_file = codecs.open("zip3_cities.xml", "w")
+out_file = codecs.open("../../zip3_cities.xml", "w")
 simplified_doc.write(out_file
                     , xml_declaration=True
                     , pretty_print=True

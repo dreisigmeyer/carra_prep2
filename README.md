@@ -38,14 +38,14 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	`ls *.xml | xargs -n1 -i zip {}.zip {}`  
 	and place the resulting zip files into _python\_validation/inData/_.
 
-2.	_create\_GBD\_metadata_ is run to generate XML files
+2.	_create\_GBD\_metadata_ is run to generate JSON files
 	for attaching zip3s, correcting city-state information, etc.
 	From this directory (i.e., where this README file is located at) issue the command  
 	`nohup python -m create_GBD_metadata &`  
 	The files 
-	_ASCII\_zip3\_cities.xml_, 
-	_cityMispellings.xml_ and 
-	_inventors.xml_
+	_ASCII\_zip3\_cities.json_, 
+	_cityMispellings.json_ and 
+	_inventors.json_
 	are copied into _CARRA\_2014/parse\_GBD/_.
 
 3.	_python\_validation_ creates valid XML documents from the original XML files (2002-present) 
@@ -75,7 +75,6 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	This lauches the number of threads specified in _\_\_main.py\_\__  
 	`NUMBER_OF_PROCESSES = 5`  
 	which you can change by editing that file.
-
 	In _CARRA\_2014_ run:  
 	`nohup ./run_it.sh &`  
 	The reulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for 

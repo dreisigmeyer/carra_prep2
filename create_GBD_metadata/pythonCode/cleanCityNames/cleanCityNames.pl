@@ -24,7 +24,7 @@ use strict;
 use warnings;
 
 #my $outFile = 'cityMisspellings.xml';
-my $outFile = 'cityMisspellings.json';
+my $outFile = '../../cityMisspellings.json';
 my @rawData = glob '../usptoData/INVENTOR_*';
 my @cleanData = glob '../usptoData/INV_COUNTY_*';
 my %holdData = ();
@@ -123,19 +123,21 @@ open(my $fh, '>', $outFile) or die "Cannot open: $!";
 #     print $fh "\t</state>\n";
 # }
 # print $fh "</states>";
-print $fh "{\n";
+print $fh "{";
 foreach my $state (sort keys %hash ) {
-    print $fh "\t\"$state\":{\n";
+    print $fh "\n\t\"$state\":{";
     foreach my $city (sort keys %{ $hash{$state} }) {
-        print $fh "\t\t\"$city\":[";
+        print $fh "\n\t\t\"$city\":[";
         my $outline = "";
         foreach my $alias (sort keys %{ $hash{$state}{$city} }) {
             $outline .= "\"$alias\",";
         }
         chop($outline);
-        print $fh "$outline],\n";
+        print $fh "$outline],";
     }
-    print $fh "\t},\n";
+    seek( $fh, -1, 1);
+    print $fh "\n\t},";
 }
-print $fh "}\n";
+seek( $fh, -1, 1);
+print $fh "\n}\n";
 close $fh
