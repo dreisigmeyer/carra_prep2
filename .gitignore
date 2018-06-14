@@ -7,3 +7,5 @@ nohup*
 *.dat
 INV_COUNTY_00_15.TXT
 INVENTOR_15.TXT
+/cmake-build-debug
+/.idea

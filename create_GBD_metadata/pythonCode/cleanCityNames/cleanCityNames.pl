@@ -23,7 +23,8 @@ be removed.  You'll need to be the final arbitrator of which those are.
 use strict;
 use warnings;
 
-my $outFile = 'cityMisspellings.xml';
+#my $outFile = 'cityMisspellings.xml';
+my $outFile = 'cityMisspellings.json';
 my @rawData = glob '../usptoData/INVENTOR_*';
 my @cleanData = glob '../usptoData/INV_COUNTY_*';
 my %holdData = ();
@@ -107,19 +108,34 @@ foreach my $patNum (keys %holdData) {
 }
 
 open(my $fh, '>', $outFile) or die "Cannot open: $!";
-print $fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-print $fh "<states>\n";
+# print $fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+# print $fh "<states>\n";
+# foreach my $state (sort keys %hash ) {
+#     print $fh "\t<state abbrev=\"$state\">\n";
+#     foreach my $city (sort keys %{ $hash{$state} }) {
+# 	foreach my $alias (sort keys %{ $hash{$state}{$city} }) {
+# 	    next if ($alias eq $city); # Only want mis-spellings
+# 	    print $fh "\t\t<alias name=\"$alias\">";
+# 	    print $fh "$city";
+# 	    print $fh "</alias>\n";
+# 	}
+#     }
+#     print $fh "\t</state>\n";
+# }
+# print $fh "</states>";
+print $fh "{\n";
 foreach my $state (sort keys %hash ) {
-    print $fh "\t<state abbrev=\"$state\">\n";
+    print $fh "\t\"$state\":{\n";
     foreach my $city (sort keys %{ $hash{$state} }) {
-	foreach my $alias (sort keys %{ $hash{$state}{$city} }) {
-	    next if ($alias eq $city); # Only want mis-spellings
-	    print $fh "\t\t<alias name=\"$alias\">";
-	    print $fh "$city";
-	    print $fh "</alias>\n";
-	}
+        print $fh "\t\t\"$city\":[";
+        my $outline = "";
+        foreach my $alias (sort keys %{ $hash{$state}{$city} }) {
+            $outline .= "\"$alias\",";
+        }
+        chop($outline);
+        print $fh "$outline],\n";
     }
-    print $fh "\t</state>\n";
+    print $fh "\t},\n";
 }
-print $fh "</states>";
+print $fh "}\n";
 close $fh

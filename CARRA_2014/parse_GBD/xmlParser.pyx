@@ -250,18 +250,14 @@ dateFormat = '%Y%m%d' # The dates are expected in %Y%m%d format
 # We'll use this to get the grant year from the GBD file name
 grant_year_re = re.compile('[a-z]{3,4}([0-9]{8})_wk[0-9]{2}') 
 
-def assign_zip3(files):
+def assign_zip3(files, xml_dict):
     global zip3_XML
     global cleaned_city_XML
     global inventor_names_XML
-    print("Loading XML files...")
-    zip3_XML = etree.parse(cw_dir + "/ASCII_zip3_cities.xml")
-    print("Loaded zip3 file")
-    cleaned_city_XML = etree.parse(cw_dir + "/cityMisspellings.xml")
-    print("Loaded city misspellings file")
-    inventor_names_XML = etree.parse(cw_dir + "/inventors.xml")
-    print("Loaded inventors file")
-
+    zip3_XML = xml_dict['zips']
+    cleaned_city_XML = xml_dict['cities']
+    inventor_names_XML = xml_dict['inventors']
+    
     for in_file in files:
         try:
             zip3_thread(in_file)
