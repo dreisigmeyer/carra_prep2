@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# import xmlParser, xmltodict
+import xmlParser
+# import xmltodict
 # from lxml import etree
 import glob, json, os, random, sys
 from functools import partial
-from multiprocessing import Pool, Manager
+from multiprocessing import Pool, Process, Manager
 
 
 NUMBER_OF_PROCESSES = int(sys.argv[1])
@@ -87,6 +88,7 @@ def split_seq(seq, NUMBER_OF_PROCESSES):
 
 # Start processing
 pathToData = 'inData/'
+pathToJSON = 'parse_GBD/'
 files = glob.glob(os.path.join(pathToData, "*.zip"))
 random.shuffle(files) # Newer years have more granted patents
 files_list = split_seq(files, NUMBER_OF_PROCESSES)
@@ -95,12 +97,21 @@ if __name__ == '__main__':
     zips_dict = manager.dict()
     cities_dict = manager.dict()
     inventors_dict = manager.dict()
-    with open('zip3_cities.json') as json_data:
+    with open(pathToJSON + 'zip3_cities.json') as json_data:
         zips_dict = json.load(json_data)
-    with open('cityMisspellings.json') as json_data:
+    with open(pathToJSON + 'cityMisspellings.json') as json_data:
         cities_dict = json.load(json_data)
-    with open('inventors.json') as json_data:
+    with open(pathToJSON + 'inventors.json') as json_data:
         inventors_dict = json.load(json_data)
     
     # p = Pool(NUMBER_OF_PROCESSES)
+    # for chunk in files_list:
+    #     p.apply_async(xmlParser.assign_zip3, args=(chunk, zips_dict, cities_dict, inventors_dict,))
+    # p.close()
+    # p.join()
     # p.map(partial(xmlParser.assign_zip3, z_dict=zips_dict, c_dict=cities_dict, i_dict=inventors_dict), files_list)
+
+    for chunk in files_list:
+        p = Process(target=xmlParser.assign_zip3, args=(chunk, zips_dict, cities_dict, inventors_dict,))
+        p.start()
+        # p.join()

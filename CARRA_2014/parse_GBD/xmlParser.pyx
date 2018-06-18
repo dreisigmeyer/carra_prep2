@@ -169,24 +169,22 @@ def split_name_suffix(in_name):
 """
 The following global variables are set in assign_zip3 below
 
-zip3_XML is created using the free-zipcode-database.csv data taken from:
+ZIP3_JSON is created using the free-zipcode-database.csv data taken from:
 federalgovernmentzipcodes.us
 
-cleaned_city_XML is created using the hand cleaned data from the USPTO DVD:
+CLEANED_CITIES_JSON is created using the hand cleaned data from the USPTO DVD:
 INV_COUNTY_XX_YY.TXT
 
-inventor_names_XML is created using INVENTOR_XX.TXT file taken from the USPTO DVD.
+INVENTOR_NAMES_JSON is created using INVENTOR_XX.TXT file taken from the USPTO DVD.
 """
-zip3_XML = None
-cleaned_city_XML = None
-inventor_names_XML = None
+# ZIP3_JSON = None
+# CLEANED_CITIES_JSON = None
+# INVENTOR_NAMES_JSON = None
 
-def get_zip3(applicant_state, 
-        applicant_city, 
-        lastName = None, 
-        firstName = None, 
-        middleInitial = None, 
-        flag = 0):
+def get_zip3(applicant_state, applicant_city,
+             ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON,
+             lastName = None, firstName = None, middleInitial = None,
+             flag = 0):
     """
     Attempts to find a zip3 from an applicant's city and state information.
     flag is for when we call this function again and avoid infinite recursion.
@@ -195,38 +193,48 @@ def get_zip3(applicant_state,
 
     possible_cities = [applicant_city]
     # Only first 20 letters of the city name used by USPTO on the DVD
-    city_xml_path = 'state[@abbrev="' + applicant_state + '"]/alias[@name="' + applicant_city[:20] + '"]'
-    hold_cities = cleaned_city_XML.xpath(city_xml_path)
-    
-    for city in hold_cities:
-        possible_cities.append(city.text)
-        
+    # city_xml_path = 'state[@abbrev="' + applicant_state + '"]/alias[@name="' + applicant_city[:20] + '"]'
+    # hold_cities = CLEANED_CITIES_JSON.xpath(city_xml_path)
+    # for city in hold_cities:
+    #     possible_cities.append(city.text)
+    for hold_city, spellings in CLEANED_CITIES_JSON[applicant_state].iteritems():
+        if hold_city not in possible_cities:
+            if applicant_city[:20] in spellings:
+                possible_cities.append(hold_city)
     for alias in possible_cities:
-        alias_xml_path = 'state[@abbrev="' + applicant_state + '"]/'
-        city_names = zip3_XML.findall(alias_xml_path)    
-        for city in city_names:
-            city_name = city.attrib['city']
-            str_match = SM(None, alias, city_name)
+        # alias_xml_path = 'state[@abbrev="' + applicant_state + '"]/'
+        # city_names = ZIP3_JSON.findall(alias_xml_path)
+        city_names = ZIP3_JSON[applicant_state]
+        for city, zips in city_names.iteritems():
+            # city_name = city.attrib['city']
+            str_match = SM(None, alias, city)
             if str_match.ratio() >= 0.9: # good enough match
-                possible_zip3s.add(city.text)
-            
+                # possible_zip3s.add(city.text)
+                possible_zip3s.update(zips)
     # If we couldn't find a zip3 we'll see if we can correct the city, state or country
     if not possible_zip3s and not flag:
         l_name = lastName[:20]
         f_name = firstName[:15]
         if middleInitial:
             middleInitial = middleInitial[0]
-        xml_str='lastName[@abbrev="' + l_name + '"]/' + \
-            'firstName[@abbrev="' + f_name + '"]/' + \
-            'middleInitial[@abbrev="' + middleInitial + '"]/location'
-        locations = inventor_names_XML.findall(xml_str)
+        # xml_str='lastName[@abbrev="' + l_name + '"]/' + \
+        #     'firstName[@abbrev="' + f_name + '"]/' + \
+        #     'middleInitial[@abbrev="' + middleInitial + '"]/location'
+        # locations = INVENTOR_NAMES_JSON.findall(xml_str)
+        locations = []
+        try:
+            locations = INVENTOR_NAMES_JSON.get(l_name).get(f_name).get(middleInitial)
+        except: # possible the name isn't in our JSON file
+            pass
         for location in locations:
             app_city = applicant_city[:20]
             app_state = applicant_state
-            possible_city = location.attrib['city']
-            possible_state = location.attrib['state']
+            # possible_city = location.attrib['city']
+            # possible_state = location.attrib['state']
+            possible_city = location['city']
+            possible_state = location['state']
             # Foreign national
-            if len(possible_state) == 3 and possible_state[2] == 'X': 
+            if len(possible_state) == 3 and possible_state[2] == 'X':
                 continue
             # We only allow the city OR the state to be incorrect.
             # Otherwise we could be finding a different inventor with
@@ -240,9 +248,11 @@ def get_zip3(applicant_state,
             # Nothing is wrong
             else:
                 continue
-            
-            hold_corrected_zip3 = get_zip3(app_state, app_city, flag = 1)
-            possible_zip3s.update(hold_corrected_zip3)                  
+
+            hold_corrected_zip3 = get_zip3(app_state, app_city,
+                                           ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON,
+                                           flag = 1)
+            possible_zip3s.update(hold_corrected_zip3)
             
     return possible_zip3s
 
@@ -250,21 +260,25 @@ dateFormat = '%Y%m%d' # The dates are expected in %Y%m%d format
 # We'll use this to get the grant year from the GBD file name
 grant_year_re = re.compile('[a-z]{3,4}([0-9]{8})_wk[0-9]{2}') 
 
-def assign_zip3(files, z_dict, c_dict, i_dict):
-    global zip3_XML
-    global cleaned_city_XML
-    global inventor_names_XML
-    zip3_XML = z_dict
-    cleaned_city_XML = c_dict
-    inventor_names_XML = i_dict
-    
+def assign_zip3(files, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON):
+
+    # global ZIP3_JSON
+    # global CLEANED_CITIES_JSON
+    # global INVENTOR_NAMES_JSON
+    #
+    # print("Entered assign_zip3 with files " + str(files))
+    #
+    # ZIP3_JSON = z_dict
+    # CLEANED_CITIES_JSON = c_dict
+    # INVENTOR_NAMES_JSON = i_dict
+
     for in_file in files:
         try:
-            zip3_thread(in_file)
-        except Exception:
+            zip3_thread(in_file, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON)
+        except Exception as e:
             pass
         
-def zip3_thread(in_file):            
+def zip3_thread(in_file, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON):
     folder_name = os.path.splitext(os.path.basename(in_file))[0]    
     # Get data in and ready
     folder_path = cw_dir + "/holdData/" + folder_name + "/"
@@ -282,14 +296,14 @@ def zip3_thread(in_file):
     # Run the queries
     for xmlDoc in xmlSplit:
         try:
-            xmlDoc_thread(xmlDoc, grant_year_GBD)
-        except Exception:
-            print("---- Problem with file " + in_file + " in xmlDoc " + xmlDoc)
+            xmlDoc_thread(xmlDoc, grant_year_GBD, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON)
+        except Exception as e:
+            print(in_file + ": Exception " + str(e) + " in xmlDoc " + xmlDoc)
             pass
     # Clean things up
     os.system("rm -rf " + folder_path)
     
-def xmlDoc_thread(xmlDoc, grant_year_GBD):
+def xmlDoc_thread(xmlDoc, grant_year_GBD, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON):
     """
     These are the XML paths we use to extract the data.
     Note: if the path is rel_path_something_XXX then this is a path that is
@@ -299,7 +313,7 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
     All of the patent XML files prior to 2002 were constructed fomr the Google
     Bulk Download *.dat files.
     """
-    
+
     validator = etree.XMLParser(dtd_validation=True)
     
     if grant_year_GBD > 2004:
@@ -362,7 +376,7 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
     elif root.find(path_applicants_alt2) is not None:
         path_applicants = path_applicants_alt2
     else:
-        print 'Not a correctly formated 2005 or later patent for applicants.'
+        # print 'Not a correctly formated 2005 or later patent for applicants.'
         return        
 
     try: # to get patent number
@@ -405,6 +419,7 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
 
     number_applicants_to_process = len(applicants)
     applicant_counter = 0
+
     for applicant in applicants:
         applicant_counter += 1
         csv_line = []
@@ -444,12 +459,10 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
             applicant_last_name = applicant_last_name + ' ' + applicant_suffix # For possible_zip3s call below
         except Exception: # something's wrong so go to the next applicant
             continue
-        
-        possible_zip3s = get_zip3(applicant_state, 
-                    applicant_city, 
-                    applicant_last_name, 
-                    applicant_first_name,
-                    applicant_middle_name)
+
+        possible_zip3s = get_zip3(applicant_state, applicant_city,
+                                  ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON,
+                                  applicant_last_name, applicant_first_name, applicant_middle_name)
             
         if not possible_zip3s: # Didn't find a zip3?
             possible_zip3s.add('') # We'll at least have the city/state
@@ -470,11 +483,12 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
     if number_applicants_to_process != applicant_counter:
         print "WARNING: Didn't try to process every applicant on patent " + patent_number
 
-    # Clean things up
-    try: # if file is open
-        csv_file.close()
-    except Exception: # don't worry if it isn't
-        pass 
+
+    # # Clean things up
+    # try: # if file is open
+    #     csv_file.close()
+    # except Exception: # don't worry if it isn't
+    #     pass
 
     # I just quickly put this on to take care of 2005 and later XML files
     # with incorrect applicant information.  Assignee info was used instead
@@ -485,7 +499,7 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
         elif root.find(path_inventors_alt2) is not None:
             path_inventors = path_inventors_alt2
         else:
-            print 'Not a correctly formated 2005 or later patent for inventors.'
+            # print 'Not a correctly formated 2005 or later patent for inventors.'
             return
             
         applicants = root.findall(path_inventors)
@@ -535,11 +549,9 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
             except Exception: # something's wrong so go to the next applicant
                 continue
             
-            possible_zip3s = get_zip3(applicant_state, 
-                        applicant_city, 
-                        applicant_last_name, 
-                        applicant_first_name,
-                        applicant_middle_name)
+            possible_zip3s = get_zip3(applicant_state, applicant_city,
+                                      ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON,
+                                      applicant_last_name, applicant_first_name, applicant_middle_name)
                 
             if not possible_zip3s: # Didn't find a zip3?
                 possible_zip3s.add('') # We'll at least have the city/state
@@ -560,8 +572,9 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD):
         if number_applicants_to_process != applicant_counter:
             print "WARNING: Didn't try to process every applicant on patent " + patent_number
 
-        # Clean things up
-        try: # if file is open
-            csv_file.close()
-        except Exception: # don't worry if it isn't
-            pass 
+        # # Clean things up
+        # try: # if file is open
+        #     csv_file.close()
+        # except Exception: # don't worry if it isn't
+        #     pass
+
