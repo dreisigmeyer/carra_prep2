@@ -76,7 +76,7 @@ os.remove(base_dir + "/pythonCode/zip3Data/hold_zip3_cities.xml")
 # os.remove(base_dir + "/pythonCode/zip3Data/zip3_cities.xml")
 
 zip3_final = """
-iconv -f UTF8 -t ASCII//TRANSLIT < {BD}/zip3_cities.xml > {BD}/ASCII_zip3_cities.xml
+iconv -f UTF-8 -t ASCII//TRANSLIT < {BD}/zip3_cities.xml > {BD}/ASCII_zip3_cities.xml
 """.format(BD = base_dir, CD = cw_dir)
 os.system(zip3_final)
 os.remove(base_dir + "/zip3_cities.xml")

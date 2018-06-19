@@ -5,6 +5,8 @@ nohup*
 *~
 *.xml
 *.json
+!cityMisspellings.json
+!zip3_cities.json
 *.dat
 *.csv
 INV_COUNTY_00_15.TXT

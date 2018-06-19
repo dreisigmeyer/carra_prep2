@@ -2,7 +2,7 @@
 
 import csv, glob, os
 
-NUMBER_OF_PROCESSES = 4
+NUMBER_OF_PROCESSES = 10
 base_dir = "parse_GBD"
 cw_dir = os.getcwd()
 fp_dir = cw_dir + "/" + base_dir

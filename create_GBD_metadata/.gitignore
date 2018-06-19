@@ -1,6 +1,2 @@
 # Ignore everything in this directory
-ASCII_zip3_cities.xml
-cityMisspellings.xml
-inventors.xml
-UTF8_zip3_cities.xml
 *.pyc
