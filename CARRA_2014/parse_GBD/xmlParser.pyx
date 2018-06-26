@@ -180,6 +180,7 @@ INVENTOR_NAMES_JSON is created using INVENTOR_XX.TXT file taken from the USPTO D
 # ZIP3_JSON = None
 # CLEANED_CITIES_JSON = None
 # INVENTOR_NAMES_JSON = None
+CLOSE_CITY_SPELLINGS = {}
 
 def get_zip3(applicant_state, applicant_city,
              ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON,
@@ -189,6 +190,7 @@ def get_zip3(applicant_state, applicant_city,
     Attempts to find a zip3 from an applicant's city and state information.
     flag is for when we call this function again and avoid infinite recursion.
     """
+    global CLOSE_CITY_SPELLINGS
     possible_zip3s = set()
 
     possible_cities = [applicant_city]
@@ -197,19 +199,38 @@ def get_zip3(applicant_state, applicant_city,
     # hold_cities = CLEANED_CITIES_JSON.xpath(city_xml_path)
     # for city in hold_cities:
     #     possible_cities.append(city.text)
-    for hold_city, spellings in CLEANED_CITIES_JSON[applicant_state].iteritems():
-        if hold_city not in possible_cities:
-            if applicant_city[:20] in spellings:
-                possible_cities.append(hold_city)
+    cleaned_cities = CLEANED_CITIES_JSON.get(applicant_state)
+    if cleaned_cities:
+        for hold_city, spellings in cleaned_cities.iteritems():
+            if hold_city not in possible_cities:
+                if applicant_city[:20] in spellings:
+                    possible_cities.append(hold_city)
+    city_names = ZIP3_JSON.get(applicant_state)
+    if city_names:
+        city_names_keys = city_names.keys()
+    else:
+        city_names_keys = []
+    close_city_names = CLOSE_CITY_SPELLINGS.get(applicant_state)
+    if close_city_names:
+        close_city_names_keys = close_city_names.keys()
+    else:
+        close_city_names_keys = []
     for alias in possible_cities:
         # alias_xml_path = 'state[@abbrev="' + applicant_state + '"]/'
         # city_names = ZIP3_JSON.findall(alias_xml_path)
-        city_names = ZIP3_JSON[applicant_state]
+        if alias in city_names_keys: # check if city isn't misspelled first
+            possible_zip3s.update(city_names[alias])
+            continue
+        if alias in close_city_names_keys: # check if the misspelling was previously caught
+            possible_zip3s.update(close_city_names[alias])
+            continue
+        CLOSE_CITY_SPELLINGS[applicant_state][alias] = [] # this isn't there
         for city, zips in city_names.iteritems():
             # city_name = city.attrib['city']
             str_match = SM(None, alias, city)
             if str_match.ratio() >= 0.9: # good enough match
                 # possible_zip3s.add(city.text)
+                CLOSE_CITY_SPELLINGS[applicant_state][alias].update(zips)
                 possible_zip3s.update(zips)
     # If we couldn't find a zip3 we'll see if we can correct the city, state or country
     if not possible_zip3s and not flag:
