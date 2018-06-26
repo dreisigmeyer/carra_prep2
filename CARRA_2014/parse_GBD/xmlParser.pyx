@@ -16,12 +16,13 @@ All of the date formats are expected to be %Y%m%d
 Created by David W. Dreisigmeyer 22 Oct 15
 """
 
-import codecs, csv, glob, os, re, sys, unicodedata, urllib, uuid, zipfile
-from HTMLParser import HTMLParser
+import codecs, csv, glob, os, re, sys, unicodedata, uuid, zipfile
+# import urllib
+# from HTMLParser import HTMLParser
 from lxml import etree
 from datetime import datetime
 from difflib import SequenceMatcher as SM
-from threading import Thread
+# from threading import Thread
 
 cw_dir = sys.argv[2]
 
@@ -182,6 +183,7 @@ INVENTOR_NAMES_JSON is created using INVENTOR_XX.TXT file taken from the USPTO D
 # INVENTOR_NAMES_JSON = None
 CLOSE_CITY_SPELLINGS = {}
 
+
 def get_zip3(applicant_state, applicant_city,
              ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON,
              lastName = None, firstName = None, middleInitial = None,
@@ -245,7 +247,7 @@ def get_zip3(applicant_state, applicant_city,
         locations = []
         try:
             locations = INVENTOR_NAMES_JSON.get(l_name).get(f_name).get(middleInitial)
-        except: # possible the name isn't in our JSON file
+        except StandardError: # possible the name isn't in our JSON file
             pass
         for location in locations:
             app_city = applicant_city[:20]
@@ -296,7 +298,7 @@ def assign_zip3(files, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON):
     for in_file in files:
         try:
             zip3_thread(in_file, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON)
-        except Exception as e:
+        except Exception:
             pass
         
 def zip3_thread(in_file, ZIP3_JSON, CLEANED_CITIES_JSON, INVENTOR_NAMES_JSON):
@@ -443,11 +445,12 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD, ZIP3_JSON, CLEANED_CITIES_JSON, INVENT
 
     for applicant in applicants:
         applicant_counter += 1
-        csv_line = []
-        csv_line.append(patent_number)
-        csv_line.append(uspto_pat_num)
-        csv_line.append(appYear)
-        csv_line.append(grant_year_GBD)
+        csv_line = [patent_number, uspto_pat_num, appYear, grant_year_GBD]
+        # csv_line = []
+        # csv_line.append(patent_number)
+        # csv_line.append(uspto_pat_num)
+        # csv_line.append(appYear)
+        # csv_line.append(grant_year_GBD)
 
         try:
             applicant_city = clean_up(applicant, rel_path_applicants_city)
@@ -532,11 +535,12 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD, ZIP3_JSON, CLEANED_CITIES_JSON, INVENT
         applicant_counter = 0
         for applicant in applicants:
             applicant_counter += 1
-            csv_line = []
-            csv_line.append(patent_number)
-            csv_line.append(uspto_pat_num)
-            csv_line.append(appYear)
-            csv_line.append(grant_year_GBD)
+            csv_line = [patent_number, uspto_pat_num, appYear, grant_year_GBD]
+            # csv_line = []
+            # csv_line.append(patent_number)
+            # csv_line.append(uspto_pat_num)
+            # csv_line.append(appYear)
+            # csv_line.append(grant_year_GBD)
 
             try:
                 applicant_city = clean_up(applicant, rel_path_inventors_city)
