@@ -226,7 +226,9 @@ def get_zip3(applicant_state, applicant_city,
         if alias in close_city_names_keys: # check if the misspelling was previously caught
             possible_zip3s.update(close_city_names[alias])
             continue
-        CLOSE_CITY_SPELLINGS[applicant_state][alias] = [] # this isn't there
+        if applicant_state not in CLOSE_CITY_SPELLINGS.keys():
+            CLOSE_CITY_SPELLINGS[applicant_state] = {}
+        CLOSE_CITY_SPELLINGS[applicant_state][alias] = set()  # this isn't there
         for city, zips in city_names.iteritems():
             # city_name = city.attrib['city']
             str_match = SM(None, alias, city)
