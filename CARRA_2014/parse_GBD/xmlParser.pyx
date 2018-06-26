@@ -491,7 +491,7 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD, ZIP3_JSON, CLEANED_CITIES_JSON, INVENT
         if not possible_zip3s: # Didn't find a zip3?
             possible_zip3s.add('') # We'll at least have the city/state
             
-        filename = str(uuid.uuid4()) # random file name
+        filename = appYear + "_" + str(uuid.uuid4()) # random file name
         ## Yes this should be ASCII
         csv_file = codecs.open("./outData/" + filename + ".csv", 'w', 'ascii')
         csv_writer = csv.writer(csv_file)
@@ -581,7 +581,7 @@ def xmlDoc_thread(xmlDoc, grant_year_GBD, ZIP3_JSON, CLEANED_CITIES_JSON, INVENT
             if not possible_zip3s: # Didn't find a zip3?
                 possible_zip3s.add('') # We'll at least have the city/state
                 
-            filename = str(uuid.uuid4()) # random file name
+            filename = appYear + "_" + str(uuid.uuid4()) # random file name
             ## Yes this should be ASCII
             csv_file = codecs.open("./outData/" + filename + ".csv", 'w', 'ascii')
             csv_writer = csv.writer(csv_file)
