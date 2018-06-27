@@ -12,6 +12,7 @@ pathToData = 'inData/'
 launch_it = "python -u -m {BD}.launch {NP} {FP}".format(BD = base_dir, NP = NUMBER_OF_PROCESSES, FP = fp_dir)
 os.system(launch_it)
 
+"""
 file_names = glob.glob('outData/*.csv')
 for file_name in file_names:
     app_year = file_name.split('_')[0]
@@ -28,3 +29,4 @@ for file_name in file_names:
     #     os.system(echo_cmd)
     # in_file.close()
     os.remove(file_name)
+"""
