@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import glob, os
+import os
 
 
-NUMBER_OF_PROCESSES = 10
+NUMBER_OF_PROCESSES = 6
 base_dir = "parse_GBD"
 cw_dir = os.getcwd()
 fp_dir = cw_dir + "/" + base_dir

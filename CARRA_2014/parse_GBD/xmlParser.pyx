@@ -18,6 +18,7 @@ Created by David W. Dreisigmeyer 22 Oct 15
 import codecs
 import csv
 import glob
+import json
 import os
 import re
 import sys
@@ -27,35 +28,37 @@ from datetime import datetime
 from difflib import SequenceMatcher as SeqMatcher
 from lxml import etree
 
-
 cw_dir = sys.argv[2]
 pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
-dateFormat = '%Y%m%d'  # The dates are expected in %Y%m%d format
+date_format = '%Y%m%d'  # The dates are expected in %Y%m%d format
 grant_year_re = re.compile('[a-z]{3,4}([0-9]{8})_wk[0-9]{2}')  # To get the grant year from the GBD file name
 """
 CLOSE_CITY_SPELLINGS is a dictionary of zips of cities in the same state with a similar name.  It includes the
-zips of the city itself.
+zips of the city itself.  This can be updated by each process which is why we didn't create it in launch.py.
 """
-CLOSE_CITY_SPELLINGS = {}
+pathToJSON = 'parse_GBD/'
+# CLOSE_CITY_SPELLINGS = {}
+with open(pathToJSON + 'close_city_spellings.json') as json_data:
+    CLOSE_CITY_SPELLINGS = json.load(json_data)
 
 
-def init_close_city_spellings(zip3_json, cleaned_cities_json):
-    """
-    Creates CLOSE_CITY_SPELLINGS
-    """
-    global CLOSE_CITY_SPELLINGS
-    states = zip3_json.keys()
-    for state in states:
-        CLOSE_CITY_SPELLINGS[state] = {}
-        hold_zips = zip3_json.get(state)
-        hold_misspells = cleaned_cities_json.get(state)
-        if hold_zips and hold_misspells is not None:
-            for city in hold_misspells.keys():
-                CLOSE_CITY_SPELLINGS[state][city] = set()
-                for alias, zips in hold_zips.iteritems():
-                    str_match = SeqMatcher(None, alias, city)
-                    if str_match.ratio() >= 0.9:
-                        CLOSE_CITY_SPELLINGS[state][city].update(zips)
+# def init_close_city_spellings(zip3_json, cleaned_cities_json):
+#     """
+#     Creates CLOSE_CITY_SPELLINGS
+#     """
+#     global CLOSE_CITY_SPELLINGS
+#     states = zip3_json.keys()
+#     for state in states:
+#         CLOSE_CITY_SPELLINGS[state] = {}
+#         hold_zips = zip3_json.get(state)
+#         hold_misspells = cleaned_cities_json.get(state)
+#         if hold_zips and hold_misspells is not None:
+#             for city in hold_misspells.keys():
+#                 CLOSE_CITY_SPELLINGS[state][city] = set()
+#                 for alias, zips in hold_zips.iteritems():
+#                     str_match = SeqMatcher(None, alias, city)
+#                     if str_match.ratio() >= 0.9:
+#                         CLOSE_CITY_SPELLINGS[state][city].update(zips)
 
 
 def clean_patnum(patnum):
@@ -232,11 +235,11 @@ def get_zip3(applicant_state, applicant_city,
 def assign_zip3(files, zip3_json, cleaned_cities_json, inventor_names_json):
     """
     """
-    init_close_city_spellings(zip3_json, cleaned_cities_json)
+    # init_close_city_spellings(zip3_json, cleaned_cities_json)
     for in_file in files:
         try:
             zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json)
-        except Exception:
+        except:
             pass
 
 
@@ -337,7 +340,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         return
     try:  # to get the application date
         app_date = root.find(path_app_date).text
-        app_year = str(datetime.strptime(app_date, dateFormat).year)
+        app_year = str(datetime.strptime(app_date, date_format).year)
     except Exception:
         print "Incorrectly formatted application date for patent " + patent_number + " in " + str(xml_doc)
         return

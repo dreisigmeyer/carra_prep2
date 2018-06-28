@@ -44,8 +44,9 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	`nohup python -m create_GBD_metadata &`  
 	The files 
 	_ASCII\_zip3\_cities.json_, 
-	_cityMispellings.json_ and 
-	_inventors.json_
+	_cityMispellings.json_, 
+	_inventors.json_ and
+	_close_city_spellings.json_
 	are copied into _CARRA\_2014/parse\_GBD/_.
 
 3.	_python\_validation_ creates valid XML documents from the original XML files (2002-present) 
