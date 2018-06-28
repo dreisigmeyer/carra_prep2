@@ -25,13 +25,7 @@ import unicodedata
 import zipfile
 from datetime import datetime
 from difflib import SequenceMatcher as SeqMatcher
-
-# import uuid
-# import urllib
-# from HTMLParser import HTMLParser
 from lxml import etree
-
-# from threading import Thread
 
 
 cw_dir = sys.argv[2]
@@ -44,41 +38,37 @@ zips of the city itself.
 """
 CLOSE_CITY_SPELLINGS = {}
 
-"""
-Helper functions
-"""
-
 
 def init_close_city_spellings(zip3_json, cleaned_cities_json):
     """
+    Creates CLOSE_CITY_SPELLINGS
     """
     global CLOSE_CITY_SPELLINGS
     states = zip3_json.keys()
     for state in states:
         CLOSE_CITY_SPELLINGS[state] = {}
-        hold_zips = zip3_json[state]
-        hold_misspells = cleaned_cities_json[state]
-        for city in hold_misspells.keys():
-            CLOSE_CITY_SPELLINGS[state][city] = set()
-            for alias, zips in hold_zips.iteritems():
-                str_match = SeqMatcher(None, alias, city)
-                if str_match.ratio() >= 0.9:
-                    CLOSE_CITY_SPELLINGS[state][city].update(zips)
+        hold_zips = zip3_json.get(state)
+        hold_misspells = cleaned_cities_json.get(state)
+        if hold_zips and hold_misspells is not None:
+            for city in hold_misspells.keys():
+                CLOSE_CITY_SPELLINGS[state][city] = set()
+                for alias, zips in hold_zips.iteritems():
+                    str_match = SeqMatcher(None, alias, city)
+                    if str_match.ratio() >= 0.9:
+                        CLOSE_CITY_SPELLINGS[state][city].update(zips)
+
 
 def clean_patnum(patnum):
     """
     Removes extraneous zero padding
     """
     pat_num = patnum.strip().upper()
-    # try: # removes any zero padding and rejoins the patent number
     hold_pat_num = pat_num_re.match(pat_num).groups()
     pat_num_len = len(hold_pat_num[0] + hold_pat_num[1])
     zero_padding = '0' * (7 - pat_num_len)
     pat_num = hold_pat_num[0] + zero_padding + hold_pat_num[1]
     zero_padding = '0' * (8 - pat_num_len)
     xml_pat_num = hold_pat_num[0] + zero_padding + hold_pat_num[1]
-    # except Exception:
-    #     pass
     return xml_pat_num, pat_num
 
 
@@ -104,18 +94,13 @@ def clean_it(in_str):
     return out_str
 
 
-"""
-        BEGIN Function definitions
-"""
-
-
 def clean_up(applicant, xml_path):
     """
     Clean up the string
     """
     applicant_text = applicant.find(xml_path).text
     applicant_text = clean_it(applicant_text)
-    # Replace utf-8 chracters with their closest ascii
+    # Replace utf-8 characters with their closest ascii
     applicant_text = unicodedata.normalize('NFKD', applicant_text)
     applicant_text = applicant_text.encode('ascii', 'ignore')
     applicant_text = re.sub('\s*LATE\s+OF\s*', "", applicant_text)
@@ -180,11 +165,6 @@ def get_zip3(applicant_state, applicant_city,
     global CLOSE_CITY_SPELLINGS
     possible_zip3s = set()
     possible_cities = [applicant_city]
-    # Only first 20 letters of the city name used by USPTO on the DVD
-    # city_xml_path = 'state[@abbrev="' + applicant_state + '"]/alias[@name="' + applicant_city[:20] + '"]'
-    # hold_cities = CLEANED_CITIES_JSON.xpath(city_xml_path)
-    # for city in hold_cities:
-    #     possible_cities.append(city.text)
     cleaned_cities = cleaned_cities_json.get(applicant_state)
     if cleaned_cities:
         for hold_city, spellings in cleaned_cities.iteritems():
@@ -192,33 +172,22 @@ def get_zip3(applicant_state, applicant_city,
                 if applicant_city[:20] in spellings:
                     possible_cities.append(hold_city)
     city_names = zip3_json.get(applicant_state)
-    if city_names:
-        city_names_keys = city_names.keys()
-    else:
-        city_names_keys = []
     close_city_names = CLOSE_CITY_SPELLINGS.get(applicant_state)
     if close_city_names:
         close_city_names_keys = close_city_names.keys()
     else:
         close_city_names_keys = []
     for alias in possible_cities:
-        # alias_xml_path = 'state[@abbrev="' + applicant_state + '"]/'
-        # city_names = ZIP3_JSON.findall(alias_xml_path)
-        if alias in city_names_keys:  # check if city isn't misspelled first
-            possible_zip3s.update(city_names[alias])
-            continue
-        if alias in close_city_names_keys:  # check if the misspelling was previously caught
+        if alias in close_city_names_keys:  # is the name ok?
             possible_zip3s.update(close_city_names[alias])
             continue
-        if applicant_state not in CLOSE_CITY_SPELLINGS.keys():
-            CLOSE_CITY_SPELLINGS[applicant_state] = {}
+        if applicant_state not in CLOSE_CITY_SPELLINGS.keys():  # is this a real state?
+            continue
         CLOSE_CITY_SPELLINGS[applicant_state][alias] = set()  # this isn't there
-        if city_names:
+        if city_names:  # this may be a new misspelling, which we're going to check for now
             for city, zips in city_names.iteritems():
-                # city_name = city.attrib['city']
                 str_match = SeqMatcher(None, alias, city)
                 if str_match.ratio() >= 0.9:  # good enough match
-                    # possible_zip3s.add(city.text)
                     CLOSE_CITY_SPELLINGS[applicant_state][alias].update(zips)
                     possible_zip3s.update(zips)
     # If we couldn't find a zip3 we'll see if we can correct the city, state or country
@@ -227,10 +196,6 @@ def get_zip3(applicant_state, applicant_city,
         f_name = first_name[:15]
         if middle_initial:
             middle_initial = middle_initial[0]
-        # xml_str='lastName[@abbrev="' + l_name + '"]/' + \
-        #     'firstName[@abbrev="' + f_name + '"]/' + \
-        #     'middleInitial[@abbrev="' + middleInitial + '"]/location'
-        # locations = INVENTOR_NAMES_JSON.findall(xml_str)
         locations = []
         try:
             locations = inventor_names_json.get(l_name).get(f_name).get(middle_initial)
@@ -239,8 +204,6 @@ def get_zip3(applicant_state, applicant_city,
         for location in locations:
             app_city = applicant_city[:20]
             app_state = applicant_state
-            # possible_city = location.attrib['city']
-            # possible_state = location.attrib['state']
             possible_city = location['city']
             possible_state = location['state']
             # Foreign national
@@ -316,7 +279,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         path_app_date = "us-bibliographic-data-grant/application-reference/document-id/date"
         path_applicants_alt1 = "us-bibliographic-data-grant/parties/applicants/"
         path_applicants_alt2 = "us-bibliographic-data-grant/us-parties/us-applicants/"
-        # path_applicants = ""
         path_assignees = "us-bibliographic-data-grant/assignees/"
         rel_path_applicants_last_name = "addressbook/last-name"
         rel_path_applicants_first_name = "addressbook/first-name"
@@ -325,7 +287,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         rel_path_assignees_state = "addressbook/address/state"
         path_inventors_alt1 = "us-bibliographic-data-grant/parties/inventors/"
         path_inventors_alt2 = "us-bibliographic-data-grant/us-parties/inventors/"
-        # path_inventors = ""
         rel_path_inventors_last_name = "addressbook/last-name"
         rel_path_inventors_first_name = "addressbook/first-name"
         rel_path_inventors_city = "addressbook/address/city"
@@ -335,7 +296,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         path_app_date = "SDOBI/B200/B220/DATE/PDAT"
         path_applicants_alt1 = "SDOBI/B700/B720"
         path_applicants_alt2 = ""
-        # path_applicants = ""
         path_assignees = "SDOBI/B700/B730"
         rel_path_applicants_last_name = "./B721/PARTY-US/NAM/SNM/STEXT/PDAT"
         rel_path_applicants_first_name = "./B721/PARTY-US/NAM/FNM/PDAT"
@@ -347,7 +307,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         path_app_date = "APD"
         path_applicants_alt1 = "INVTS"
         path_applicants_alt2 = ""
-        # path_applicants = ""
         path_assignees = "ASSGS/"
         rel_path_applicants_last_name = "LN"
         rel_path_applicants_first_name = "FN"
@@ -369,7 +328,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
     elif root.find(path_applicants_alt2) is not None:
         path_applicants = path_applicants_alt2
     else:
-        # print 'Not a correctly formated 2005 or later patent for applicants.'
         return
     try:  # to get patent number
         patent_number = root.find(path_patent_number).text
@@ -377,8 +335,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
     except Exception:
         print "Couldn't get patent number for " + str(xml_doc)
         return
-    # app_date = ''
-    # app_year = ''
     try:  # to get the application date
         app_date = root.find(path_app_date).text
         app_year = str(datetime.strptime(app_date, dateFormat).year)
@@ -427,14 +383,10 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 applicant_sequence_num = applicant.get('sequence')
             except Exception:  # For pre-2005 patents
                 applicant_sequence_num = ''
-            # try:
             applicant_last_name = clean_up(applicant, rel_path_applicants_last_name)
             applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
             applicant_first_name = clean_up(applicant, rel_path_applicants_first_name)
             applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
-            # except Exception:
-            #     applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-            #     applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
             csv_line.append(applicant_sequence_num)
             csv_line.append(applicant_counter)
             csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
@@ -446,9 +398,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                                   applicant_last_name, applicant_first_name, applicant_middle_name)
         if not possible_zip3s:  # Didn't find a zip3?
             possible_zip3s.add('')  # We'll at least have the city/state
-        # filename = app_year + "_" + str(uuid.uuid4()) # random file name
         # ## Yes this should be ASCII
-        # csv_file = codecs.open("./outData/" + filename + ".csv", 'w', 'ascii')
         csv_file = codecs.open("./outData/zip3s_" + app_year + ".csv", 'a', 'ascii')
         csv_writer = csv.writer(csv_file)
         # Write results
@@ -470,7 +420,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         elif root.find(path_inventors_alt2) is not None:
             path_inventors = path_inventors_alt2
         else:
-            # print 'Not a correctly formated 2005 or later patent for inventors.'
             return
         applicants = root.findall(path_inventors)
         if not applicants:
@@ -498,14 +447,10 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                     applicant_sequence_num = applicant.get('sequence')
                 except Exception:  # For pre-2005 patents
                     applicant_sequence_num = ''
-                # try:
                 applicant_last_name = clean_up(applicant, rel_path_inventors_last_name)
                 applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
                 applicant_first_name = clean_up(applicant, rel_path_inventors_first_name)
                 applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
-                # except Exception:
-                #     applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-                #     applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
                 csv_line.append(applicant_sequence_num)
                 csv_line.append(applicant_counter)
                 csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
@@ -517,9 +462,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                                       applicant_last_name, applicant_first_name, applicant_middle_name)
             if not possible_zip3s:  # Didn't find a zip3?
                 possible_zip3s.add('')  # We'll at least have the city/state
-            # filename = app_year + "_" + str(uuid.uuid4()) # random file name
             # ## Yes this should be ASCII
-            # csv_file = codecs.open("./outData/" + filename + ".csv", 'w', 'ascii')
             csv_file = codecs.open("./outData/zip3s_" + app_year + ".csv", 'a', 'ascii')
             csv_writer = csv.writer(csv_file)
             # Write results
