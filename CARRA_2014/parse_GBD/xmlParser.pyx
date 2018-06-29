@@ -237,10 +237,7 @@ def assign_zip3(files, zip3_json, cleaned_cities_json, inventor_names_json):
     """
     # init_close_city_spellings(zip3_json, cleaned_cities_json)
     for in_file in files:
-        try:
-            zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json)
-        except:
-            pass
+        zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json)
 
 
 def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
@@ -323,8 +320,8 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             root = etree.parse(xml_doc, validator)
         else:
             root = etree.parse(xml_doc)
-    except Exception:
-        print "Couldn't parse patent document " + str(xml_doc)
+    except StandardError as e:
+        print(str(e) + ": couldn't parse patent document " + str(xml_doc))
         return
     if root.find(path_applicants_alt1) is not None:
         path_applicants = path_applicants_alt1
@@ -335,19 +332,19 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
     try:  # to get patent number
         patent_number = root.find(path_patent_number).text
         patent_number, uspto_pat_num = clean_patnum(patent_number)
-    except Exception:
-        print "Couldn't get patent number for " + str(xml_doc)
+    except StandardError as e:
+        print(str(e) + ": couldn't get patent number for " + str(xml_doc))
         return
     try:  # to get the application date
         app_date = root.find(path_app_date).text
         app_year = str(datetime.strptime(app_date, date_format).year)
-    except Exception:
-        print "Incorrectly formatted application date for patent " + patent_number + " in " + str(xml_doc)
+    except StandardError as e:
+        print(str(e) + ": incorrectly formatted application date for patent " + patent_number + " in " + str(xml_doc))
         return
     try:
         assignees = root.findall(path_assignees)
-    except Exception:
-        print "Incorrectly formatted assignees for patent " + patent_number + " in " + str(xml_doc)
+    except StandardError as e:
+        print(str(e) + ": incorrectly formatted assignees for patent " + patent_number + " in " + str(xml_doc))
         return
     assignee_state = set()
     if assignees:
@@ -356,13 +353,13 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 assignee_state_hold = assignee.find(rel_path_assignees_state).text
                 assignee_state_hold = re.sub('[^a-zA-Z]+', '', assignee_state_hold).upper()
                 assignee_state.add(assignee_state_hold)
-            except Exception:  # don't worry if you can't
+            except StandardError:  # don't worry if you can't
                 pass
     if not assignee_state:
         assignee_state.add('')  # we need a non-empty assignee_state below
     applicants = root.findall(path_applicants)
     if not applicants:
-        print "No applicants on patent : " + patent_number + " in " + str(xml_doc)
+        print("No applicants on patent : " + patent_number + " in " + str(xml_doc))
         return
     number_applicants_to_process = len(applicants)
     applicant_counter = 0
@@ -372,19 +369,19 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         try:
             applicant_city = clean_up(applicant, rel_path_applicants_city)
             csv_line.append(applicant_city)
-        except Exception:
+        except StandardError:
             applicant_city = ''
             csv_line.append('')  # Don't worry if it's not there
         try:
             applicant_state = applicant.find(rel_path_applicants_state).text
             applicant_state = re.sub('[^a-zA-Z]+', '', applicant_state).upper()
             csv_line.append(applicant_state)
-        except Exception:  # not a US inventor
+        except StandardError:  # not a US inventor
             continue
         try:  # to get all of the applicant data
             try:  # For 2005 and later patents
                 applicant_sequence_num = applicant.get('sequence')
-            except Exception:  # For pre-2005 patents
+            except StandardError:  # For pre-2005 patents
                 applicant_sequence_num = ''
             applicant_last_name = clean_up(applicant, rel_path_applicants_last_name)
             applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
@@ -394,7 +391,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             csv_line.append(applicant_counter)
             csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
             applicant_last_name = applicant_last_name + ' ' + applicant_suffix  # For possible_zip3s call below
-        except Exception:  # something's wrong so go to the next applicant
+        except StandardError:  # something's wrong so go to the next applicant
             continue
         possible_zip3s = get_zip3(applicant_state, applicant_city,
                                   zip3_json, cleaned_cities_json, inventor_names_json,
@@ -413,7 +410,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 csv_writer.writerow(hold_csv_line)
     # make sure we at least tried to get every applicant
     if number_applicants_to_process != applicant_counter:
-        print "WARNING: Didn't try to process every applicant on patent " + patent_number
+        print("WARNING: Didn't try to process every applicant on patent " + patent_number)
     # I just quickly put this on to take care of 2005 and later XML files
     # with incorrect applicant information.  Assignee info was used instead
     # of inventor
@@ -426,7 +423,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             return
         applicants = root.findall(path_inventors)
         if not applicants:
-            print "No applicants on patent : " + patent_number + " in " + str(xml_doc)
+            print("No applicants on patent : " + patent_number + " in " + str(xml_doc))
             return
         number_applicants_to_process = len(applicants)
         applicant_counter = 0
@@ -436,19 +433,19 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             try:
                 applicant_city = clean_up(applicant, rel_path_inventors_city)
                 csv_line.append(applicant_city)
-            except Exception:
+            except StandardError:
                 applicant_city = ''
                 csv_line.append('')  # Don't worry if it's not there
             try:
                 applicant_state = applicant.find(rel_path_inventors_state).text
                 applicant_state = re.sub('[^a-zA-Z]+', '', applicant_state).upper()
                 csv_line.append(applicant_state)
-            except Exception:  # not a US inventor
+            except StandardError:  # not a US inventor
                 continue
             try:  # to get all of the applicant data
                 try:  # For 2005 and later patents
                     applicant_sequence_num = applicant.get('sequence')
-                except Exception:  # For pre-2005 patents
+                except StandardError:  # For pre-2005 patents
                     applicant_sequence_num = ''
                 applicant_last_name = clean_up(applicant, rel_path_inventors_last_name)
                 applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
@@ -458,7 +455,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 csv_line.append(applicant_counter)
                 csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
                 applicant_last_name = applicant_last_name + ' ' + applicant_suffix  # For possible_zip3s call below
-            except Exception:  # something's wrong so go to the next applicant
+            except StandardError:  # something's wrong so go to the next applicant
                 continue
             possible_zip3s = get_zip3(applicant_state, applicant_city,
                                       zip3_json, cleaned_cities_json, inventor_names_json,
@@ -477,4 +474,4 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                     csv_writer.writerow(hold_csv_line)
         # make sure we at least tried to get every applicant
         if number_applicants_to_process != applicant_counter:
-            print "WARNING: Didn't try to process every applicant on patent " + patent_number
+            print("WARNING: Didn't try to process every applicant on patent " + patent_number)

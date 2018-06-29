@@ -46,5 +46,5 @@ if __name__ == '__main__':
         p = Process(target=xmlParser.assign_zip3, args=(chunk, zips_dict, cities_dict, inventors_dict,))
         procs.append(p)
         p.start()
-    # for p in procs:
+    # for p in procs:  # joining them prevented removal of intermediate files???
     #     p.join()
