@@ -1,5 +1,8 @@
-# Ignore everything in this directory
 *.pyc
 *.c
 *.so
 *.xml
+*.json
+!cityMisspellings.json
+!close_city_spellings.json
+!zip3_cities.json
