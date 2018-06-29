@@ -7,6 +7,7 @@ nohup*
 *.json
 !cityMisspellings.json
 !zip3_cities.json
+!close_city_spellings.json
 *.dat
 *.csv
 INV_COUNTY_00_15.TXT
