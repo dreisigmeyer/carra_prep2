@@ -42,25 +42,6 @@ with open(pathToJSON + 'close_city_spellings.json') as json_data:
     CLOSE_CITY_SPELLINGS = json.load(json_data)
 
 
-# def init_close_city_spellings(zip3_json, cleaned_cities_json):
-#     """
-#     Creates CLOSE_CITY_SPELLINGS
-#     """
-#     global CLOSE_CITY_SPELLINGS
-#     states = zip3_json.keys()
-#     for state in states:
-#         CLOSE_CITY_SPELLINGS[state] = {}
-#         hold_zips = zip3_json.get(state)
-#         hold_misspells = cleaned_cities_json.get(state)
-#         if hold_zips and hold_misspells is not None:
-#             for city in hold_misspells.keys():
-#                 CLOSE_CITY_SPELLINGS[state][city] = set()
-#                 for alias, zips in hold_zips.iteritems():
-#                     str_match = SeqMatcher(None, alias, city)
-#                     if str_match.ratio() >= 0.9:
-#                         CLOSE_CITY_SPELLINGS[state][city].update(zips)
-
-
 def clean_patnum(patnum):
     """
     Removes extraneous zero padding
