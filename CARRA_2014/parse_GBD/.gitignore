@@ -3,6 +3,3 @@
 *.so
 *.xml
 *.json
-!cityMisspellings.json
-!close_city_spellings.json
-!zip3_cities.json
