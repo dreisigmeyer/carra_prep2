@@ -14,10 +14,10 @@
 
 2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to 
     run  
-    `bzip2 -d create_GBD_metadata/pythonCode/usptoData/INV_COUNTY_00_15.TXT.bz2`  
-    `bzip2 -d create_GBD_metadata/pythonCode/usptoData/INVENTOR_15.TXT.bz2`  
-	`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`  
-	`bzip2 -d create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
+    `bzip2 -dk create_GBD_metadata/pythonCode/usptoData/INV_COUNTY_00_15.TXT.bz2`  
+    `bzip2 -dk create_GBD_metadata/pythonCode/usptoData/INVENTOR_15.TXT.bz2`  
+	`bzip2 -dk create_GBD_metadata/pythonCode/zip3Data/infobox_properties_en.nt.bz2`  
+	`bzip2 -dk create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
 
 ## Setting up the Python environment
@@ -27,6 +27,20 @@ environment using
 More information is available at https://conda.io/docs/user-guide/tasks/manage-environments.html.
 
 ## Running the code
+After getting the data and setting up the Python environment,
+the entire process that follows can be run with the convenience script  
+`nohup ./doitall.sh &`  
+* The outputs in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for PIKing.
+* The file _patent\_metadata/prdn\_metadata.csv_ is used later for triangulation.
+* From _create\_GBD\_metadata_ the files
+_zip3\_cities.json_,
+_cityMispellings.json_,
+_inventors.json_ and
+_close_city_spellings.json_
+are also used later for triangulation.  
+The entire run can take multiple days to complete.
+    
+
 1.	_GBD\_1976\_2001\_dat\_to\_xml_ will process any pre-2002 patents in the dat format.
 	The original dat files (1976-2001 as YYYY.zip) are available at 
 	https://bulkdata.uspto.gov/
@@ -34,35 +48,30 @@ More information is available at https://conda.io/docs/user-guide/tasks/manage-e
 	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_.
 	In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
 	`nohup ./runit.sh &`  
-	In the directory _GBD\_1976\_2001\_dat\_to\_xml/outData/_ issue the command  
-	`ls *.xml | xargs -n1 -i zip {}.zip {}`  
-	and place the resulting zip files into _python\_validation/inData/_.
 
 2.	_create\_GBD\_metadata_ is run to generate JSON files
 	for attaching zip3s, correcting city-state information, etc.
 	From this directory (i.e., where this README file is located at) issue the command  
 	`nohup python -m create_GBD_metadata &`  
 	The files 
-	_ASCII\_zip3\_cities.json_, 
+	_zip3\_cities.json_, 
 	_cityMispellings.json_, 
 	_inventors.json_ and
 	_close_city_spellings.json_
 	are copied into _CARRA\_2014/parse\_GBD/_.
+	These are also used later for triangulation.
 
 3.	_python\_validation_ creates valid XML documents from the original XML files (2002-present) 
     available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	The file names are of the form _pgbYYYYMMDD_wkXX.zip_ or _ipgbYYYYMMDD_wkXX.zip_.
-	The included script _get\_uspto\_data.sh_ will download all the required zip files from the 
-	    USPTO website.
-	Place the downloaded files into _python\_validation/inData/_ alongside the XML files from the 
-    _GBD\_1976\_2001\_dat\_to\_xml_ step above.
-	DTD files are also in the USPTO download sites.
+	The included script _get\_uspto\_data.sh_ will download all the required zip files from the USPTO website.
+	DTD files are also on the USPTO download sites.
 	All necessary DTD, ent, etc files are included as of 7 Jun 18.
 	Place any new DTD files into _python\_validation/DTDs_ as well as _CARRA\_2014/parse_GBD/_.
-	The created XML files were also validated but this was turned off because there were too many 
-	issues with the USPTO XML files.
+	The created XML files were also validated but this was turned off because there were too many issues with the 
+	USPTO XML files.
 	In _python\_validation/_ run:  
 	`nohup ./runit &`  
 	Copy the files in _python\_validation/outData/_ to _CARRA\_2014/inData/_ and 

@@ -29,3 +29,9 @@ done
 cd "$HERE"
 rm -rf "$HERE"/holdData/*
 
+cd outData
+cp *.zip ../../CARRA_2014/inData
+mv *.zip ../../patent_metadata/inData
+cd ../inData
+rm *.zip
+cd ../
