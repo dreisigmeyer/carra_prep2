@@ -1,16 +1,16 @@
 ## Getting the data
 1.	If you don't have git-lfs you'll need to download:
-	* http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2 
-	unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). 
-	DBPedia changed the name from earlier releases.
-	Put the file into _create_GBD_metadata/pythonCode/zip3Data/_.
-	This is the latest version that works with the code.
-	DBPedia switched to ttl format after the 2015-04 release.
-	* The "All Names" file from the Topical Gazetteers from 
-	https://geonames.usgs.gov/domestic/download_data.htm.
-	Unzip it and place it in _create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/_.
-	* The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
-	These files are placed in _create_GBD_metadata/pythonCode/usptoData/_.
+        * http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2 
+        unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). 
+        DBPedia changed the name from earlier releases.
+        Put the file into _create_GBD_metadata/pythonCode/zip3Data/_.
+        This is the latest version that works with the code.
+        DBPedia switched to ttl format after the 2015-04 release.
+        * The "All Names" file from the Topical Gazetteers from 
+        https://geonames.usgs.gov/domestic/download_data.htm.
+        Unzip it and place it in _create_GBD_metadata/pythonCode/zip3Data/usgs_geonames/_.
+        * The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
+        These files are placed in _create_GBD_metadata/pythonCode/usptoData/_.
 
 2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to 
     run  
@@ -25,6 +25,7 @@ Included is an _environment.yml_ file that you can use with Anaconda to set up a
 environment using  
 `conda env create -f environment.yml`  
 More information is available at https://conda.io/docs/user-guide/tasks/manage-environments.html.
+The code was developed using Python 2.7.
 
 ## Running the code
 After getting the data and setting up the Python environment,
@@ -37,17 +38,27 @@ _zip3\_cities.json_,
 _cityMispellings.json_,
 _inventors.json_ and
 _close_city_spellings.json_
-are also used later for triangulation.  
-The entire run can take multiple days to complete.
-    
+are also used later for triangulati_CARRA\_2014/outData/_ are post-processed and then sent to CARRA for PIKing.
+* The file _patent\_metadata/prdn\_metadata.csv_ is used later for triangulation.
+* From _create\_GBD\_metadata_ the files
+_zip3\_cities.json_,
+_cityMispellings.json_,
+_inventors.json_ and
+_close_city_spellings.json_
+are also used lateon.
 
+The entire run can take multiple days to complete.
+
+## Running individual pieces of the code
 1.	_GBD\_1976\_2001\_dat\_to\_xml_ will process any pre-2002 patents in the dat format.
 	The original dat files (1976-2001 as YYYY.zip) are available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	Place the downloaded files into _GBD\_1976\_2001\_dat\_to\_xml/inData/_.
+	The included script _get\_uspto\_data.sh_ will download all the required zip files from the USPTO website.
 	In _GBD\_1976\_2001\_dat\_to\_xml/_ run:  
 	`nohup ./runit.sh &`  
+	**This doesn't depend on any other piece of the code.**
 
 2.	_create\_GBD\_metadata_ is run to generate JSON files
 	for attaching zip3s, correcting city-state information, etc.
@@ -59,13 +70,16 @@ The entire run can take multiple days to complete.
 	_inventors.json_ and
 	_close_city_spellings.json_
 	are copied into _CARRA\_2014/parse\_GBD/_.
-	These are also used later for triangulation.
+	These are also used later for triangulation.  
+	**This doesn't depend on any other piece of the code.**
 
 3.	_python\_validation_ creates valid XML documents from the original XML files (2002-present) 
     available at 
 	https://bulkdata.uspto.gov/
 	under the **Patent Grant Bibliographic (Front Page) Text Data (JAN 1976 - PRESENT)** section.
 	The file names are of the form _pgbYYYYMMDD_wkXX.zip_ or _ipgbYYYYMMDD_wkXX.zip_.
+	Place the downloaded files into _python\_validation/inData/_.
+	For pre-2002 the files from running _GBD\_1976\_2001\_dat\_to\_xml/_ are also needed.
 	The included script _get\_uspto\_data.sh_ will download all the required zip files from the USPTO website.
 	DTD files are also on the USPTO download sites.
 	All necessary DTD, ent, etc files are included as of 7 Jun 18.
@@ -74,8 +88,7 @@ The entire run can take multiple days to complete.
 	USPTO XML files.
 	In _python\_validation/_ run:  
 	`nohup ./runit &`  
-	Copy the files in _python\_validation/outData/_ to _CARRA\_2014/inData/_ and 
-	_patent\_metadata/inData/_.
+	**This depends on the output of _GBD\_1976\_2001\_dat\_to\_xml/_.**
 
 4.	_CARRA\_2014_ prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
@@ -87,13 +100,14 @@ The entire run can take multiple days to complete.
 	which you can change by editing that file.
 	In _CARRA\_2014_ run:  
 	`nohup ./run_it.sh &`  
-	The reulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for 
-	PIKing.
+	The resulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for 
+	PIKing.  
+	**This depends on the output of _create\_GBD\_metadata_ and _python\_validation_.**
 
 5.	_patent\_metadata_ collects some basic information about each patent.
 	In _patent\_metadata_ run:  
 	`nohup ./run_it.sh &`  
 	which calls _./create\_patent\_metadata.py 5_ where 5 is the number of processes to run.
 	You can change the processor count by editing the _run\_it.sh_ file.
-	The final _prdn\_metadata.csv_ file is used later for triangulation.
-
+	The final _prdn\_metadata.csv_ file is used later for triangulation.  
+	**This depends on the output of _create\_GBD\_metadata_.**

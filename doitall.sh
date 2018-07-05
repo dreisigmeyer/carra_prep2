@@ -14,6 +14,8 @@ cp create_GBD_metadata/*.json CARRA_2014/parse_GBD/
 mv create_GBD_metadata/*.json ./
 cd CARRA_2014
 ./run_it.sh
+rm messages
 cd ../patent_metadata
-./runit.sh
+./run_it.sh
 cd ../
+mv patent_metadata/prdn_metadata.csv ./
