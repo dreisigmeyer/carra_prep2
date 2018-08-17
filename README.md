@@ -95,6 +95,7 @@ The entire run can take multiple days to complete.
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
 	* attach zip3s to the inventors' cities.  
+	
 	This lauches the number of threads specified in _\_\_main.py\_\__  
 	`NUMBER_OF_PROCESSES = 5`  
 	which you can change by editing that file.
