@@ -1,3 +1,6 @@
 [submodule "dat_to_xml"]
 	path = dat_to_xml
 	url = git@github.com:dreisigmeyer/dat_to_xml.git
+[submodule "xml_rewrite"]
+	path = xml_rewrite
+	url = git@github.com:dreisigmeyer/xml_rewrite.git
