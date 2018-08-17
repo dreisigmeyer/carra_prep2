@@ -1,3 +1,6 @@
+*.sublime-project
+*.sublime-workspace
+
 AllNames_*.txt
 infobox_properties_en.nt
 messages
@@ -12,8 +15,4 @@ nohup*
 *.csv
 INV_COUNTY_00_15.TXT
 INVENTOR_15.TXT
-/cmake-build-debug
-/.idea
-_Deparsed_XSubs.pm
-/hold
-CMakeLists.txt
+
