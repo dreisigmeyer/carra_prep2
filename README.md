@@ -60,7 +60,7 @@ are also used later.
 	These are also used later for triangulation.  
 	> This doesn't depend on any other piece of the code.
 
-3.	See the _README.md__ in **xml_rewrite**. 
+3.	See the _README.md_ in **xml_rewrite**. 
 	This doesn't depend on any other piece of the code.
 
 4.	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.

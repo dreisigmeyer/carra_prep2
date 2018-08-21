@@ -286,9 +286,9 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
     elif grant_year_gbd < 2002:
         path_patent_number = 'WKU'
         path_app_date = 'APD'
-        path_applicants_alt1 = 'INVTS'
+        path_applicants_alt1 = 'inventors'
         path_applicants_alt2 = ''
-        path_assignees = 'ASSGS/'
+        path_assignees = 'assignees/'
         rel_path_applicants_last_name = 'LN'
         rel_path_applicants_first_name = 'FN'
         rel_path_applicants_city = 'CTY'
