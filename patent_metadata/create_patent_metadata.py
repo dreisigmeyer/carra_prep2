@@ -37,7 +37,7 @@ cw_dir = os.getcwd()
 pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 dateFormat = '%Y%m%d'  # The dates are expected in %Y%m%d format
 # We'll use this to get the grant year from the GBD file name
-grant_year_re = re.compile('[a-z]{3,4}([0-9]{8})_wk[0-9]{2}')
+grant_year_re = grant_year_re = re.compile('i?pgb([0-9]{4})')
 xml_validator = etree.XMLParser(dtd_validation=False, resolve_entities=False, encoding='utf8')
 
 
@@ -112,16 +112,16 @@ def get_assignee_info(assignee, xml_path):
 
 def get_info(files):
     for file in files:
-        folder_name = os.path.splitext(os.path.basename(file))[0]
+        folder_name = os.path.basename(file).split('.')[0]
         # Get data in and ready
         folder_path = cw_dir + '/holdData/' + folder_name + '/'
         os.system('mkdir ' + folder_path)
         os.system('tar -xf ' + file + ' -C ' + folder_path + ' --strip-components=1')
-        xmlSplit = glob.glob(folder_path + '/*.xml')
-        out_file_name = os.path.splitext(os.path.basename(file))[0]
+        xml_split = glob.glob(folder_path + '/*.xml')
+        out_file_name = os.path.basename(file).split('.')[0]
         csv_file = codecs.open('./outData/' + out_file_name + '.csv', 'w', 'ascii')
         csv_writer = csv.writer(csv_file, delimiter=',')
-        grant_year_GBD = int(grant_year_re.match(folder_name).group(1)[:4])
+        grant_year_GBD = int(grant_year_re.match(folder_name).group(1))
         '''
         These are the XML paths we use to extract the data.
         Note: if the path is rel_path_something_XXX then this is a path that is
@@ -164,8 +164,12 @@ def get_info(files):
         else:
             raise UserWarning('Incorrect grant year: ' + str(grant_year_GBD))
         # Run the queries
-        for xmlDoc in xmlSplit:
-            root = etree.parse(xmlDoc, xml_validator)
+        for xml_doc in xml_split:
+            try:
+                root = etree.parse(xml_doc, xml_validator)
+            except Exception:
+                print('Problem parsing ' + xml_doc + ' in ' + folder_name)
+                continue
             try:  # to get patent number
                 xml_patent_number = root.find(path_patent_number).text
                 xml_patent_number, patent_number = clean_patnum(xml_patent_number)
@@ -173,14 +177,14 @@ def get_info(files):
                 continue
             # I hand fixed some files and want the grant year from the XML
             # for these, otherwise take the grant year from the folder name
-            grantYear = grant_year_GBD
-            handFixed = re.match(r'fix', folder_name)
-            if (handFixed and handFixed.group(0) == 'fix'):
+            grant_year = grant_year_GBD
+            hand_fixed = re.match(r'fix', folder_name)
+            if (hand_fixed and hand_fixed.group(0) == 'fix'):
                 try:  # to get the application date
                     grantDate = root.find(path_grant_date).text.upper()
-                    grantYear = str(datetime.strptime(grantDate, dateFormat).year)
+                    grant_year = str(datetime.strptime(grantDate, dateFormat).year)
                 except Exception:
-                    grantYear = grant_year_GBD
+                    grant_year = grant_year_GBD
                     pass
             appDate = ''
             appYear = ''
@@ -233,7 +237,7 @@ def get_info(files):
                                 continue
             csv_line = []
             csv_line.append(xml_patent_number)
-            csv_line.append(grantYear)
+            csv_line.append(grant_year)
             csv_line.append(appYear)
             csv_line.append(number_assignees)
             csv_line.append(us_inventor)

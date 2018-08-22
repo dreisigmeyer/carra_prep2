@@ -31,7 +31,7 @@ from lxml import etree
 cw_dir = sys.argv[2]
 pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 date_format = '%Y%m%d'  # The dates are expected in %Y%m%d format
-grant_year_re = re.compile('[a-z]{3,4}([0-9]{8})_wk[0-9]{2}')  # To get the grant year from the GBD file name
+grant_year_re = grant_year_re = re.compile('i?pgb([0-9]{8})')
 '''
 CLOSE_CITY_SPELLINGS is a dictionary of zips of cities in the same state with a similar name.  It includes the
 zips of the city itself.  This can be updated by each process which is why we didn't create it in launch.py.

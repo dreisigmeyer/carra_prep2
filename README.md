@@ -47,7 +47,10 @@ are also used later.
 1.	See the _README.md_ in **dat_to_xml**.  
 	> This doesn't depend on any other piece of the code.
 
-2.	**create_GBD_metadata** is run to generate JSON files
+2.	See the _README.md_ in **xml_rewrite**.  
+	> This doesn't depend on any other piece of the code.
+
+3.	**create_GBD_metadata** is run to generate JSON files
 	for attaching zip3s, correcting city-state information, etc.
 	From this directory (i.e., where this README file is located at) issue the command  
 	`nohup python -m create_GBD_metadata &`  
@@ -59,9 +62,6 @@ are also used later.
 	are copied into **for_carra/parse_GBD/**.
 	These are also used later for triangulation.  
 	> This doesn't depend on any other piece of the code.
-
-3.	See the _README.md_ in **xml_rewrite**. 
-	This doesn't depend on any other piece of the code.
 
 4.	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
@@ -84,4 +84,4 @@ are also used later.
 	which calls _./create\_patent\_metadata.py 5_ where 5 is the number of processes to run.
 	You can change the processor count by editing the _run\_it.sh_ file.
 	The final _prdn\_metadata.csv_ file is used later for triangulation.  
-	> This depends on the output of **create_GBD_metadata**.
+	> This depends on the output of **dat_to_xml** and **xml_rewrite**.
