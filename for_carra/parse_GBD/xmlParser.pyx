@@ -183,7 +183,7 @@ def get_zip3(applicant_state, applicant_city,
         locations = []
         try:
             locations = inventor_names_json.get(l_name).get(f_name).get(middle_initial)
-        except StandardError:  # possible the name isn't in our JSON file
+        except Exception:  # possible the name isn't in our JSON file
             pass
         for location in locations:
             app_city = applicant_city[:20]
@@ -225,7 +225,7 @@ def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
     folder_name = os.path.splitext(os.path.basename(in_file))[0]
     # Get data in and ready
     folder_path = cw_dir + '/holdData/' + folder_name + '/'
-    os.umask(0002)
+    os.umask(0o777)
     os.mkdir(folder_path)
     zipped_file = zipfile.ZipFile(in_file, 'r')
     zipped_file.extractall(folder_path)
@@ -301,7 +301,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             root = etree.parse(xml_doc, validator)
         else:
             root = etree.parse(xml_doc)
-    except StandardError as e:
+    except Exception as e:
         print(str(e) + ': could not parse patent document ' + str(xml_doc))
         return
     if root.find(path_applicants_alt1) is not None:
@@ -313,18 +313,18 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
     try:  # to get patent number
         patent_number = root.find(path_patent_number).text
         patent_number, uspto_pat_num = clean_patnum(patent_number)
-    except StandardError as e:
+    except Exception as e:
         print(str(e) + ': could not get patent number for ' + str(xml_doc))
         return
     try:  # to get the application date
         app_date = root.find(path_app_date).text
         app_year = str(datetime.strptime(app_date, date_format).year)
-    except StandardError as e:
+    except Exception as e:
         print(str(e) + ': incorrectly formatted application date for patent ' + patent_number + ' in ' + str(xml_doc))
         return
     try:
         assignees = root.findall(path_assignees)
-    except StandardError as e:
+    except Exception as e:
         print(str(e) + ': incorrectly formatted assignees for patent ' + patent_number + ' in ' + str(xml_doc))
         return
     assignee_state = set()
@@ -334,7 +334,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 assignee_state_hold = assignee.find(rel_path_assignees_state).text
                 assignee_state_hold = re.sub('[^a-zA-Z]+', '', assignee_state_hold).upper()
                 assignee_state.add(assignee_state_hold)
-            except StandardError:  # don't worry if you can't
+            except Exception:  # don't worry if you can't
                 pass
     if not assignee_state:
         assignee_state.add('')  # we need a non-empty assignee_state below
@@ -350,19 +350,19 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         try:
             applicant_city = clean_up(applicant, rel_path_applicants_city)
             csv_line.append(applicant_city)
-        except StandardError:
+        except Exception:
             applicant_city = ''
             csv_line.append('')  # Don't worry if it's not there
         try:
             applicant_state = applicant.find(rel_path_applicants_state).text
             applicant_state = re.sub('[^a-zA-Z]+', '', applicant_state).upper()
             csv_line.append(applicant_state)
-        except StandardError:  # not a US inventor
+        except Exception:  # not a US inventor
             continue
         try:  # to get all of the applicant data
             try:  # For 2005 and later patents
                 applicant_sequence_num = applicant.get('sequence')
-            except StandardError:  # For pre-2005 patents
+            except Exception:  # For pre-2005 patents
                 applicant_sequence_num = ''
             applicant_last_name = clean_up(applicant, rel_path_applicants_last_name)
             applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
@@ -372,7 +372,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             csv_line.append(applicant_counter)
             csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
             applicant_last_name = applicant_last_name + ' ' + applicant_suffix  # For possible_zip3s call below
-        except StandardError:  # something's wrong so go to the next applicant
+        except Exception:  # something's wrong so go to the next applicant
             continue
         possible_zip3s = get_zip3(applicant_state, applicant_city,
                                   zip3_json, cleaned_cities_json, inventor_names_json,
@@ -414,19 +414,19 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             try:
                 applicant_city = clean_up(applicant, rel_path_inventors_city)
                 csv_line.append(applicant_city)
-            except StandardError:
+            except Exception:
                 applicant_city = ''
                 csv_line.append('')  # Don't worry if it's not there
             try:
                 applicant_state = applicant.find(rel_path_inventors_state).text
                 applicant_state = re.sub('[^a-zA-Z]+', '', applicant_state).upper()
                 csv_line.append(applicant_state)
-            except StandardError:  # not a US inventor
+            except Exception:  # not a US inventor
                 continue
             try:  # to get all of the applicant data
                 try:  # For 2005 and later patents
                     applicant_sequence_num = applicant.get('sequence')
-                except StandardError:  # For pre-2005 patents
+                except Exception:  # For pre-2005 patents
                     applicant_sequence_num = ''
                 applicant_last_name = clean_up(applicant, rel_path_inventors_last_name)
                 applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
@@ -436,7 +436,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 csv_line.append(applicant_counter)
                 csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
                 applicant_last_name = applicant_last_name + ' ' + applicant_suffix  # For possible_zip3s call below
-            except StandardError:  # something's wrong so go to the next applicant
+            except Exception:  # something's wrong so go to the next applicant
                 continue
             possible_zip3s = get_zip3(applicant_state, applicant_city,
                                       zip3_json, cleaned_cities_json, inventor_names_json,
