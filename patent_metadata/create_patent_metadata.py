@@ -167,8 +167,8 @@ def get_info(files):
         for xml_doc in xml_split:
             try:
                 root = etree.parse(xml_doc, xml_validator)
-            except Exception:
-                print('Problem parsing ' + xml_doc + ' in ' + folder_name)
+            except Exception as e:
+                print('Problem parsing ' + xml_doc + ' in ' + folder_name + ' with error ' + str(e))
                 continue
             try:  # to get patent number
                 xml_patent_number = root.find(path_patent_number).text
@@ -203,8 +203,9 @@ def get_info(files):
             us_inventor = 0
             if root.find(path_applicants_alt1) is not None:
                 path_applicants = path_applicants_alt1
-            elif root.find(path_applicants_alt2) is not None:
-                path_applicants = path_applicants_alt2
+            elif path_applicants_alt2:
+                if root.find(path_applicants_alt2) is not None:
+                    path_applicants = path_applicants_alt2
 
             if path_applicants:
                 applicants = root.findall(path_applicants)
