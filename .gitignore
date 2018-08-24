@@ -15,4 +15,4 @@ nohup*
 *.csv
 INV_COUNTY_00_15.TXT
 INVENTOR_15.TXT
-
+__pycache__/

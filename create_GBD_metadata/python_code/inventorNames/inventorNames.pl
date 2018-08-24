@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-# Why are you here? Go AWAY!
-# Call it:
-# ./inventorNames.pl
 use strict;
 use warnings;
 
@@ -53,26 +50,6 @@ while ( my $line = <DATA> ) {
 close DATA;
 
 open(my $fh, '>', $outFile) or die "Cannot open: $!";
-# print $fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-# print $fh "<inventors>\n";
-# foreach my $last (sort keys %hash ) {
-#     print $fh "\t<lastName abbrev=\"$last\">\n";
-#     foreach my $first (sort keys %{ $hash{$last} }) {
-# 	print $fh "\t\t<firstName abbrev=\"$first\">\n";
-# 	foreach my $mi (sort keys %{ $hash{$last}{$first} }) {
-# 	    print $fh "\t\t\t<middleInitial abbrev=\"$mi\">\n";
-# 	    foreach my $city (sort keys %{ $hash{$last}{$first}{$mi} }) {
-# 		foreach my $state (sort keys %{ $hash{$last}{$first}{$mi}{$city} }) {
-# 		    print $fh "\t\t\t\t<location city=\"$city\" state=\"$state\"></location>\n";
-# 		}
-# 	    }
-# 	    print $fh "\t\t\t</middleInitial>\n";
-# 	}
-# 	print $fh "\t\t</firstName>\n";
-#     }
-#     print $fh "\t</lastName>\n";
-# }
-# print $fh "</inventors>";
 print $fh "{";
 foreach my $last (sort keys %hash ) {
     print $fh "\n\t\"$last\":{";

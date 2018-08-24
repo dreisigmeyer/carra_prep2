@@ -1,20 +1,23 @@
 #!/bin/bash
 
-NUM_PY_THREADS=4
 # The get_uspto_data.sh files should be executed independently and
 # then verified that all of the files were downloaded correctly.
 
+NUM_PY_THREADS=4
 # create the 1976-2001 XML files
 # clean up the 2002 and later XML files and gather together the
 # information needed for city misspellings, etc
 cd dat_to_xml
 ./run_it.sh $NUM_PY_THREADS
+
 cd ../xml_rewrite
-./run_it.sh $NUM_PY_THREADS & PIDVAL=$!
+./run_it.sh $NUM_PY_THREADS
+
 cd ../
-python -m create_GBD_metadata & PIDMETA=$!
-wait $PIDVAL
-wait $PIDMETA
+cp dat_to_xml/xml_files/*.bz2 create_GBD_metadata/xml_data
+cp xml_rewrite/rewriter/original_xml_files/*.bz2 create_GBD_metadata/xml_data
+python -m create_GBD_metadata
+rm create_GBD_metadata/xml_data/*
 
 # move data around
 cp dat_to_xml/xml_files/*.bz2 for_carra/inData

@@ -283,7 +283,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         rel_path_applicants_city = './B721/PARTY-US/ADR/CITY/PDAT'
         rel_path_applicants_state = './B721/PARTY-US/ADR/STATE/PDAT'
         rel_path_assignees_state = './B731/PARTY-US/ADR/STATE/PDAT'
-    elif grant_year_gbd < 2002:
+    elif 1976 < grant_year_gbd < 2002:
         path_patent_number = 'WKU'
         path_app_date = 'APD'
         path_applicants_alt1 = 'inventors'
