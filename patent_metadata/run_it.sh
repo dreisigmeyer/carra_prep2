@@ -1,5 +1,6 @@
 #!/bin/bash
 
-./create_patent_metadata.py 4
+NUM_PY_THREADS=4
+./create_patent_metadata.py $NUM_PY_THREADS
 cat outData/*.csv > prdn_metadata.csv
 rm inData/*.bz2
