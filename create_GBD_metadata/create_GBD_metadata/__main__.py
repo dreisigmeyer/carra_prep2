@@ -4,7 +4,7 @@ from difflib import SequenceMatcher as SeqMatcher
 import glob
 import json
 import os
-import python_code.inventorNames.inventor_names as inventor_names
+from create_GBD_metadata.inventor_names import create_inventor_json
 import subprocess
 import xmltodict
 
@@ -72,44 +72,43 @@ def zips_xml_to_json(xml_file, json_file):
         json.dump(zip_dict, fp, indent=8, sort_keys=True)
 
 
-cd_str = '{FP}/python_code/cleanCityNames/'.format(FP=fp_dir)
-os.chdir(cd_str)
-subprocess.call(['perl', 'cleanCityNames.pl'])
+# cd_str = '{FP}/create_GBD_metadata/cleanCityNames/'.format(FP=fp_dir)
+# os.chdir(cd_str)
+# subprocess.call(['perl', 'cleanCityNames.pl'])
 
 in_dir_path = 'xml_data/'
-in_directories = glob.glob(in_dir_path + '*')
-inventor_names.create_inventor_json(in_directories)
+create_inventor_json(in_dir_path)
 
-os.chdir(cw_dir)
-process_data = 'python -m {BD}.python_code.zip3Data.usgs_geonames.process_data'.format(BD=base_dir)
-os.system(process_data)
+# os.chdir(cw_dir)
+# process_data = 'python -m {BD}.create_GBD_metadata.zip3Data.usgs_geonames.process_data'.format(BD=base_dir)
+# os.system(process_data)
 
-parse_post_offices = 'python -m {BD}.python_code.zip3Data.parse_post_offices post_offices'.format(BD=base_dir)
-os.system(parse_post_offices)
+# parse_post_offices = 'python -m {BD}.create_GBD_metadata.zip3Data.parse_post_offices post_offices'.format(BD=base_dir)
+# os.system(parse_post_offices)
 
-parser = '''
-python -m {BD}.python_code.zip3Data.parser sparql_query_results.csv infobox_properties_en.nt
-'''.format(BD=base_dir)
-os.system(parser)
+# parser = '''
+# python -m {BD}.create_GBD_metadata.zip3Data.parser sparql_query_results.csv infobox_properties_en.nt
+# '''.format(BD=base_dir)
+# os.system(parser)
 
-zip3_cities = 'python -m {BD}.python_code.zip3Data.zip3_cities'.format(BD=base_dir)
-os.system(zip3_cities)
+# zip3_cities = 'python -m {BD}.create_GBD_metadata.zip3Data.zip3_cities'.format(BD=base_dir)
+# os.system(zip3_cities)
 
-city_xslt = 'python -m {BD}.python_code.zip3Data.city_xslt'.format(BD=base_dir)
-os.system(city_xslt)
+# city_xslt = 'python -m {BD}.create_GBD_metadata.zip3Data.city_xslt'.format(BD=base_dir)
+# os.system(city_xslt)
 
-os.remove(base_dir + '/python_code/zip3Data/us_towns.csv')
-os.remove(base_dir + '/python_code/zip3Data/post_office_zips.csv')
-os.remove(base_dir + '/python_code/zip3Data/usgs_zcta5.csv')
-os.remove(base_dir + '/python_code/zip3Data/hold_zip3_cities.xml')
+# os.remove(base_dir + '/create_GBD_metadata/zip3Data/us_towns.csv')
+# os.remove(base_dir + '/create_GBD_metadata/zip3Data/post_office_zips.csv')
+# os.remove(base_dir + '/create_GBD_metadata/zip3Data/usgs_zcta5.csv')
+# os.remove(base_dir + '/create_GBD_metadata/zip3Data/hold_zip3_cities.xml')
 
-zip3_final = '''
-iconv -f UTF-8 -t ASCII//TRANSLIT < {BD}/zip3_cities.xml > {BD}/ASCII_zip3_cities.xml
-'''.format(BD=base_dir, CD=cw_dir)
-os.system(zip3_final)
-os.remove(base_dir + '/zip3_cities.xml')
-zips_xml_to_json(base_dir + '/ASCII_zip3_cities.xml', base_dir + '/zip3_cities.json')
-os.remove(base_dir + '/ASCII_zip3_cities.xml')
-init_close_city_spellings(base_dir + '/zip3_cities.json',
-                          base_dir + '/cityMisspellings.json',
-                          base_dir + '/close_city_spellings.json')
+# zip3_final = '''
+# iconv -f UTF-8 -t ASCII//TRANSLIT < {BD}/zip3_cities.xml > {BD}/ASCII_zip3_cities.xml
+# '''.format(BD=base_dir, CD=cw_dir)
+# os.system(zip3_final)
+# os.remove(base_dir + '/zip3_cities.xml')
+# zips_xml_to_json(base_dir + '/ASCII_zip3_cities.xml', base_dir + '/zip3_cities.json')
+# os.remove(base_dir + '/ASCII_zip3_cities.xml')
+# init_close_city_spellings(base_dir + '/zip3_cities.json',
+#                           base_dir + '/cityMisspellings.json',
+#                           base_dir + '/close_city_spellings.json')

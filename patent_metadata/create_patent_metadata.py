@@ -38,7 +38,11 @@ pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 dateFormat = '%Y%m%d'  # The dates are expected in %Y%m%d format
 # We'll use this to get the grant year from the GBD file name
 grant_year_re = grant_year_re = re.compile('i?pgb([0-9]{4})')
-xml_validator = etree.XMLParser(dtd_validation=False, resolve_entities=False, encoding='utf8')
+magic_validator = etree.XMLParser(
+    dtd_validation=True,
+    resolve_entities=False,
+    encoding='utf-8',
+    recover=True)
 
 
 def split_seq(seq, NUMBER_OF_PROCESSES):
@@ -166,7 +170,7 @@ def get_info(files):
         # Run the queries
         for xml_doc in xml_split:
             try:
-                root = etree.parse(xml_doc, xml_validator)
+                root = etree.parse(xml_doc, parser=magic_validator)
             except Exception as e:
                 print('Problem parsing ' + xml_doc + ' in ' + folder_name + ' with error ' + str(e))
                 continue

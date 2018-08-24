@@ -2,10 +2,16 @@ import tarfile
 import glob
 import json
 from lxml import etree
+import os
 import re
 import shutil
 
 INVENTORS_DICT = dict()
+magic_validator = etree.XMLParser(
+    dtd_validation=False,
+    resolve_entities=False,
+    encoding='utf-8',
+    recover=True)
 
 
 def add_to_inventors_dict(ln, fn, mn, city, state):
@@ -13,24 +19,42 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
     Add applicant information to global dictionary
     '''
     global INVENTORS_DICT
-    mi = mn[0]
+    if mn:
+        mi = mn[0]
+    else:
+        mi = ''
     if ln in INVENTORS_DICT:
         if fn in INVENTORS_DICT[ln]:
             if mi in INVENTORS_DICT[ln][fn]:
                 INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
+            else:
+                INVENTORS_DICT[ln][fn][mi] = []
+                INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
+        else:
+            INVENTORS_DICT[ln][fn] = {}
+            INVENTORS_DICT[ln][fn][mi] = []
+            INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
+    else:
+        INVENTORS_DICT[ln] = {}
+        INVENTORS_DICT[ln][fn] = {}
+        INVENTORS_DICT[ln][fn][mi] = []
+        INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
 
 
 def create_inventor_json(directory):
-    grant_year_re = re.compile('i?pgb([0-9]{8})')
+    grant_year_re = re.compile('i?pgb([0-9]{4})')
     xml_directories = glob.glob(directory + '/*.bz2')
     for xml_directory in xml_directories:
-        grant_year = int(grant_year_re.match(xml_directory).group(1)[:4])
+        print('====> working on files ' + xml_directory)
+        xml_filename = os.path.basename(xml_directory).split('.')[0]
+        grant_year = int(grant_year_re.match(xml_filename).group(1)[:4])
+        hold_directory = directory + xml_filename
         with tarfile.open(name=xml_directory, mode='r:bz2') as tar_file:
             tar_file.extractall(path=directory)
-            xml_docs = glob.glob(xml_directory + tar_file.name + '*.xml')
+            xml_docs = glob.glob(hold_directory + '/*.xml')
             for xml_doc in xml_docs:
                 xml_to_json_doc(xml_doc, grant_year)
-            shutil.rmtree(tar_file.name)
+            shutil.rmtree(hold_directory)
     with open('inventors.json', 'w') as json_file:
         json.dump(INVENTORS_DICT, json_file, ensure_ascii=False, indent=4)
 
@@ -114,7 +138,7 @@ def xml_to_json_doc(xml_doc, grant_year):
     else:
         raise UserWarning('Incorrect grant year: ' + str(grant_year))
 
-    root = etree.parse(xml_doc)
+    root = etree.parse(xml_doc, parser=magic_validator)
     if root.find(path_applicants_alt1) is not None:
         path_applicants = path_applicants_alt1
     elif root.find(path_applicants_alt2) is not None:
