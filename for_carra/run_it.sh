@@ -10,5 +10,3 @@ else
 fi
 
 python -m parse_GBD $NUM_PY_THREADS
-rm parse_GBD/*.json
-rm inData/*.zip

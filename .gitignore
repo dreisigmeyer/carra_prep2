@@ -16,3 +16,6 @@ nohup*
 INV_COUNTY_00_15.TXT
 INVENTOR_15.TXT
 __pycache__/
+csv_output/
+json_output/
+xml_output/

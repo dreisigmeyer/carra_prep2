@@ -11,4 +11,4 @@ fi
 
 ./create_patent_metadata.py $NUM_PY_THREADS
 cat outData/*.csv > prdn_metadata.csv
-rm inData/*.bz2
+rm outData/*.csv

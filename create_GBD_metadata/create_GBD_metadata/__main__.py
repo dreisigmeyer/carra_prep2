@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from difflib import SequenceMatcher as SeqMatcher
-import glob
 import json
 import os
 from create_GBD_metadata.inventor_names import create_inventor_json
-import subprocess
+import sys
 import xmltodict
 
 base_dir = 'create_GBD_metadata'
 cw_dir = os.getcwd()
 fp_dir = cw_dir + '/' + base_dir
 CLOSE_CITY_SPELLINGS = {}
+xml_files = sys.argv[1]
 
 
 class SetEncoder(json.JSONEncoder):
@@ -76,8 +76,7 @@ def zips_xml_to_json(xml_file, json_file):
 # os.chdir(cd_str)
 # subprocess.call(['perl', 'cleanCityNames.pl'])
 
-in_dir_path = 'xml_data/'
-create_inventor_json(in_dir_path)
+create_inventor_json(xml_files)
 
 # os.chdir(cw_dir)
 # process_data = 'python -m {BD}.create_GBD_metadata.zip3Data.usgs_geonames.process_data'.format(BD=base_dir)

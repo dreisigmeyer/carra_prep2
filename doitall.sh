@@ -10,29 +10,23 @@ cd dat_to_xml
 # clean up the 2002 and later XML files
 cd ../xml_rewrite
 ./run_it.sh $NUM_PY_THREADS
-# move data around
+# get the output xml files together
 cd ../
-cp dat_to_xml/xml_files/*.bz2 create_GBD_metadata/xml_data
-cp xml_rewrite/rewriter/original_xml_files/*.bz2 create_GBD_metadata/xml_data
-cp dat_to_xml/xml_files/*.bz2 for_carra/inData
-cp xml_rewrite/rewriter/original_xml_files/*.bz2 for_carra/inData
+mv dat_to_xml/xml_files/*.bz2  ./xml_output/xml_with_inventors/
+mv xml_rewrite/rewriter/original_xml_files/*.bz2  ./xml_output/xml_with_inventors/
+mv dat_to_xml/modified_xml_files/*.bz2  ./xml_output/xml_without_inventors/
+mv xml_rewrite/rewriter/modified_xml_files/*.bz2  ./xml_output/xml_without_inventors/
 # gather together the information needed for city misspellings, etc
 cd create_GBD_metadata
-./run_it.sh
-rm create_GBD_metadata/xml_data/*
-# move data around
+./run_it.sh ../xml_output/xml_with_inventors
 cd ../
-cp create_GBD_metadata/*.json for_carra/parse_GBD/
-mv create_GBD_metadata/*.json ./
+mv create_GBD_metadata/*.json ./json_output
 # get the files ready to go to CARRA
 # cd for_carra
 # ./run_it.sh $NUM_PY_THREADS
-# rm messages
-# cd ../
 # get together some basic information for each patent
-cp dat_to_xml/xml_files/*.bz2 patent_metadata/inData
-cp xml_rewrite/rewriter/original_xml_files/*.bz2 patent_metadata/inData
+# cd ../
 cd patent_metadata
 ./run_it.sh $NUM_PY_THREADS
 cd ../
-mv patent_metadata/prdn_metadata.csv ./
+mv patent_metadata/prdn_metadata.csv ./csv_output/

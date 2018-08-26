@@ -41,16 +41,17 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
         INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
 
 
-def create_inventor_json(directory):
+def create_inventor_json(directories):
+    hold_data_path = 'xml_data/'
     grant_year_re = re.compile('i?pgb([0-9]{4})')
-    xml_directories = glob.glob(directory + '/*.bz2')
+    xml_directories = glob.glob(directories + '/*.bz2')
     for xml_directory in xml_directories:
-        print('====> working on files ' + xml_directory)
+        print('====> Processing : ' + xml_directory)
         xml_filename = os.path.basename(xml_directory).split('.')[0]
         grant_year = int(grant_year_re.match(xml_filename).group(1)[:4])
-        hold_directory = directory + xml_filename
+        hold_directory = hold_data_path + xml_filename
         with tarfile.open(name=xml_directory, mode='r:bz2') as tar_file:
-            tar_file.extractall(path=directory)
+            tar_file.extractall(path=hold_data_path)
             xml_docs = glob.glob(hold_directory + '/*.xml')
             for xml_doc in xml_docs:
                 xml_to_json_doc(xml_doc, grant_year)
@@ -108,7 +109,7 @@ def split_name_suffix(in_name):
 def xml_to_json_doc(xml_doc, grant_year):
     '''
     '''
-    if grant_year > 2004:
+    if 2005 <= grant_year:
         path_applicants_alt1 = 'us-bibliographic-data-grant/parties/applicants/'
         path_applicants_alt2 = 'us-bibliographic-data-grant/us-parties/us-applicants/'
         rel_path_applicants_last_name = 'addressbook/last-name'
@@ -121,14 +122,14 @@ def xml_to_json_doc(xml_doc, grant_year):
         rel_path_inventors_first_name = 'addressbook/first-name'
         rel_path_inventors_city = 'addressbook/address/city'
         rel_path_inventors_state = 'addressbook/address/state'
-    elif 2001 < grant_year < 2005:
+    elif 2002 <= grant_year <= 2004:
         path_applicants_alt1 = 'SDOBI/B700/B720'
         path_applicants_alt2 = ''
         rel_path_applicants_last_name = './B721/PARTY-US/NAM/SNM/STEXT/PDAT'
         rel_path_applicants_first_name = './B721/PARTY-US/NAM/FNM/PDAT'
         rel_path_applicants_city = './B721/PARTY-US/ADR/CITY/PDAT'
         rel_path_applicants_state = './B721/PARTY-US/ADR/STATE/PDAT'
-    elif 1976 < grant_year < 2002:
+    elif 1976 <= grant_year <= 2001:
         path_applicants_alt1 = 'inventors'
         path_applicants_alt2 = ''
         rel_path_applicants_last_name = 'LN'
@@ -139,10 +140,11 @@ def xml_to_json_doc(xml_doc, grant_year):
         raise UserWarning('Incorrect grant year: ' + str(grant_year))
 
     root = etree.parse(xml_doc, parser=magic_validator)
-    if root.find(path_applicants_alt1) is not None:
-        path_applicants = path_applicants_alt1
-    elif root.find(path_applicants_alt2) is not None:
-        path_applicants = path_applicants_alt2
+    if path_applicants_alt2:
+        if root.find(path_applicants_alt1) is not None:
+            path_applicants = path_applicants_alt1
+        else:
+            path_applicants = path_applicants_alt2
     else:
         return
     applicants = root.findall(path_applicants)
@@ -171,7 +173,7 @@ def xml_to_json_doc(xml_doc, grant_year):
             applicant_middle_name,
             applicant_city,
             applicant_state)
-    if grant_year > 2004:
+    if path_inventors_alt1:  # more recent patents have the assignees as the applicants
         if root.find(path_inventors_alt1) is not None:
             path_inventors = path_inventors_alt1
         elif root.find(path_inventors_alt2) is not None:
