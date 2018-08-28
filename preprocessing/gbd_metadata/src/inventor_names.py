@@ -26,7 +26,9 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
     if ln in INVENTORS_DICT:
         if fn in INVENTORS_DICT[ln]:
             if mi in INVENTORS_DICT[ln][fn]:
-                INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
+                new_entry = {'city': city, 'state': state}
+                if new_entry not in INVENTORS_DICT[ln][fn][mi]:
+                    INVENTORS_DICT[ln][fn][mi].append(new_entry)
             else:
                 INVENTORS_DICT[ln][fn][mi] = []
                 INVENTORS_DICT[ln][fn][mi].append({'city': city, 'state': state})
@@ -46,7 +48,6 @@ def create_inventor_json(directories):
     grant_year_re = re.compile('i?pgb([0-9]{4})')
     xml_directories = glob.glob(directories + '/*.bz2')
     for xml_directory in xml_directories:
-        print('====> Processing : ' + xml_directory)
         xml_filename = os.path.basename(xml_directory).split('.')[0]
         grant_year = int(grant_year_re.match(xml_filename).group(1)[:4])
         hold_directory = hold_data_path + xml_filename

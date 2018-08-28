@@ -223,7 +223,7 @@ def get_info(files):
                                 break
                         except Exception:  # not a US inventor
                             continue
-            if grant_year_GBD > 2004:  # USPTO changing their way of entering information
+            if grant_year_GBD >= 2005:  # USPTO changing their way of entering information
                 if root.find(path_inventors_alt1) is not None:
                     path_inventors = path_inventors_alt1
                 elif root.find(path_inventors_alt2) is not None:

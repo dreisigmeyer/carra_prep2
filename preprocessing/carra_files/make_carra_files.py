@@ -5,7 +5,7 @@ import json
 import os
 import random
 import sys
-import xmlParser
+import src.xmlParser as xmlParser
 from multiprocessing import Process
 
 
