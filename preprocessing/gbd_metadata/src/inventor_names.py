@@ -48,7 +48,7 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
 
 
 def create_inventor_json(directories):
-    hold_data_path = 'xml_data/'
+    hold_data_path = './xml_data/'
     grant_year_re = re.compile('i?pgb([0-9]{4})')
     xml_directories = glob.glob(directories + '/*.bz2')
     for xml_directory in xml_directories:
