@@ -30,5 +30,5 @@ python -m preprocessing outputs/xml_output/xml_with_inventors
 # ./run_it.sh $NUM_PY_THREADS
 # cd ../
 mv preprocessing/carra_files/out_data/*.csv outputs/for_carra
-mv preprocessing/gdb_metadata/*.json outputs/json_output
+mv *.json outputs/json_output
 mv preprocessing/patent_metadata/prdn_metadata.csv outputs/csv_output/

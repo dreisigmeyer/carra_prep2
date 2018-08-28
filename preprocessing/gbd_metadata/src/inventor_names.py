@@ -3,6 +3,8 @@ import glob
 import json
 from lxml import etree
 import os
+from preprocessing.shared_python_code.inventor_info import get_inventor_info
+from preprocessing.shared_python_code.xml_paths import inv_xml_paths
 import re
 import shutil
 
@@ -19,6 +21,8 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
     Add applicant information to global dictionary
     '''
     global INVENTORS_DICT
+    if not state or not ln or not fn or not city:
+        return
     if mn:
         mi = mn[0]
     else:
@@ -61,149 +65,35 @@ def create_inventor_json(directories):
         json.dump(INVENTORS_DICT, json_file, ensure_ascii=False, indent=4)
 
 
-def split_first_name(in_name):
-    '''
-    Get middle name out of first name
-    '''
-    holder = in_name.split(' ', 1)
-    if len(holder) > 1:
-        return holder[0], holder[1]
-    else:
-        return in_name, ''
-
-
-def split_name_suffix(in_name):
-    '''
-    Takes the suffix off the last name
-    '''
-    # These are the generational suffixes.
-    suffix_list = [
-        'SR', 'SENIOR', 'I', 'FIRST', '1ST',
-        'JR', 'JUNIOR', 'II', 'SECOND', '2ND',
-        'THIRD', 'III', '3RD',
-        'FOURTH', 'IV', '4TH',
-        'FIFTH', 'V', '5TH',
-        'SIXTH', 'VI', '6TH',
-        'SEVENTH', 'VII', '7TH',
-        'EIGHTH', 'VIII', '8TH',
-        'NINTH' 'IX', '9TH',
-        'TENTH', 'X', '10TH'
-    ]
-    holder = in_name.rsplit(' ', 2)
-    if len(holder) == 1:  # includes empty string
-        return in_name, ''
-    elif len(holder) == 2:
-        if holder[1] in suffix_list:
-            return holder[0], holder[1]
-        else:
-            return in_name, ''
-    elif holder[2] in suffix_list:
-        if holder[1] == 'THE':
-            return holder[0], holder[2]
-        else:
-            last_nm = holder[0] + ' ' + holder[1]
-            return last_nm, holder[2]
-    else:
-        return in_name, ''
-
-
 def xml_to_json_doc(xml_doc, grant_year):
     '''
     '''
-    if 2005 <= grant_year:
-        path_applicants_alt1 = 'us-bibliographic-data-grant/parties/applicants/'
-        path_applicants_alt2 = 'us-bibliographic-data-grant/us-parties/us-applicants/'
-        rel_path_applicants_last_name = 'addressbook/last-name'
-        rel_path_applicants_first_name = 'addressbook/first-name'
-        rel_path_applicants_city = 'addressbook/address/city'
-        rel_path_applicants_state = 'addressbook/address/state'
-        path_inventors_alt1 = 'us-bibliographic-data-grant/parties/inventors/'
-        path_inventors_alt2 = 'us-bibliographic-data-grant/us-parties/inventors/'
-        rel_path_inventors_last_name = 'addressbook/last-name'
-        rel_path_inventors_first_name = 'addressbook/first-name'
-        rel_path_inventors_city = 'addressbook/address/city'
-        rel_path_inventors_state = 'addressbook/address/state'
-    elif 2002 <= grant_year <= 2004:
-        path_applicants_alt1 = 'SDOBI/B700/B720'
-        path_applicants_alt2 = ''
-        rel_path_applicants_last_name = './B721/PARTY-US/NAM/SNM/STEXT/PDAT'
-        rel_path_applicants_first_name = './B721/PARTY-US/NAM/FNM/PDAT'
-        rel_path_applicants_city = './B721/PARTY-US/ADR/CITY/PDAT'
-        rel_path_applicants_state = './B721/PARTY-US/ADR/STATE/PDAT'
-    elif 1976 <= grant_year <= 2001:
-        path_applicants_alt1 = 'inventors'
-        path_applicants_alt2 = ''
-        rel_path_applicants_last_name = 'LN'
-        rel_path_applicants_first_name = 'FN'
-        rel_path_applicants_city = 'CTY'
-        rel_path_applicants_state = 'STA'
-    else:
-        raise UserWarning('Incorrect grant year: ' + str(grant_year))
-
+    _, _, path_apps_alt1, path_apps_alt2, path_invs_alt1, path_invs_alt2, _ = inv_xml_paths(grant_year)
     root = etree.parse(xml_doc, parser=magic_validator)
-    if path_applicants_alt2:
-        if root.find(path_applicants_alt1) is not None:
-            path_applicants = path_applicants_alt1
-        else:
-            path_applicants = path_applicants_alt2
+    if root.find(path_apps_alt1) is not None:
+        path_applicants = path_apps_alt1
+    elif path_apps_alt2 and root.find(path_apps_alt2) is not None:
+            path_applicants = path_apps_alt2
     else:
         return
     applicants = root.findall(path_applicants)
     if not applicants:
         return
     for applicant in applicants:
-        try:
-            applicant_city = applicant.find(rel_path_applicants_city).text
-        except Exception:
-            continue
-        try:
-            applicant_state = applicant.find(rel_path_applicants_state).text
-            applicant_state = re.sub('[^a-zA-Z]+', '', applicant_state).upper()
-        except Exception:  # not a US inventor
-            continue
-        try:  # to get all of the applicant data
-            applicant_last_name = applicant.find(rel_path_applicants_last_name).text
-            applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-            applicant_first_name = applicant.find(rel_path_applicants_first_name).text
-            applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
-        except Exception:  # something's wrong so go to the next applicant
-            continue
-        add_to_inventors_dict(
-            applicant_last_name,
-            applicant_first_name,
-            applicant_middle_name,
-            applicant_city,
-            applicant_state)
-    if path_inventors_alt1:  # more recent patents have the assignees as the applicants
-        if root.find(path_inventors_alt1) is not None:
-            path_inventors = path_inventors_alt1
-        elif root.find(path_inventors_alt2) is not None:
-            path_inventors = path_inventors_alt2
+        city, state, _, ln, suf, fn, mn = get_inventor_info(applicant, grant_year)
+        ln = (ln + ' ' + suf).strip()
+        add_to_inventors_dict(ln, fn, mn, city, state)
+    if path_invs_alt1:  # more recent patents have the assignees as the applicants
+        if root.find(path_invs_alt1) is not None:
+            path_inventors = path_invs_alt1
+        elif root.find(path_invs_alt2) is not None:
+            path_inventors = path_invs_alt2
         else:
             return
         applicants = root.findall(path_inventors)
         if not applicants:
             return
         for applicant in applicants:
-            try:
-                applicant_city = applicant.find(rel_path_inventors_city).text
-            except Exception:
-                continue
-            try:
-                applicant_state = applicant.find(rel_path_inventors_state).text
-                applicant_state = re.sub('[^a-zA-Z]+', '', applicant_state).upper()
-            except Exception:  # not a US inventor
-                continue
-            try:  # to get all of the applicant data
-                applicant_last_name = applicant.find(rel_path_inventors_last_name).text
-                applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-                applicant_first_name = applicant.find(rel_path_inventors_first_name).text
-                applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
-            except Exception:  # something's wrong so go to the next applicant
-                continue
-            add_to_inventors_dict(
-                applicant_last_name,
-                applicant_first_name,
-                applicant_middle_name,
-                applicant_city,
-                applicant_state)
+            city, state, _, ln, suf, fn, mn = get_inventor_info(applicant, grant_year)
+            ln = (ln + ' ' + suf).strip()
+            add_to_inventors_dict(ln, fn, mn, city, state)

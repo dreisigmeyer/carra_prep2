@@ -2,14 +2,14 @@
 
 from difflib import SequenceMatcher as SeqMatcher
 import json
-import os
+# import os
 from preprocessing.gbd_metadata.src.inventor_names import create_inventor_json
 import sys
 import xmltodict
 
-base_dir = 'create_GBD_metadata'
-cw_dir = os.getcwd()
-fp_dir = cw_dir + '/' + base_dir
+# base_dir = 'create_GBD_metadata'
+# cw_dir = os.getcwd()
+# fp_dir = cw_dir + '/' + base_dir
 CLOSE_CITY_SPELLINGS = {}
 xml_files = sys.argv[1]
 
