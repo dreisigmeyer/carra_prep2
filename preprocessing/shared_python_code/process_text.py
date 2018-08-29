@@ -1,5 +1,5 @@
 import re
-import unicodedata
+# import unicodedata
 
 pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 
@@ -54,15 +54,29 @@ def clean_patnum(patnum):
 #     return applicant_text.strip()
 
 
-def clean_up(applicant, xml_path):
+def standardize_name(in_str):
+    '''
+    '''
+    in_str = re.sub('[^a-zA-Z0-9 ]+', '', in_str)  # alphanumeric and spaces only
+    in_str = ' '.join(in_str.split())  # single spaces only
+    in_str = in_str.upper()  # all upper case
+    return in_str.strip()  # no leading or trailing whitespace
+
+
+def standardize_name_late_of(in_str):
+    '''
+    '''
+    in_str = standardize_name(in_str)
+    in_str = re.sub('\s*LATE\s+OF\s*', '', in_str)  # deceased inventors
+    return in_str.strip()  # no leading or trailing whitespace
+
+
+def clean_up_inventor_name(applicant, xml_path):
     '''
     '''
     applicant_text = applicant.find(xml_path).text
-    applicant_text = re.sub('[^a-zA-Z0-9 ]+', '', applicant_text)
-    applicant_text = ' '.join(applicant_text.split())
-    applicant_text = re.sub('\s*LATE\s+OF\s*', '', applicant_text)
-    applicant_text = applicant_text.upper()
-    return applicant_text.strip()
+    applicant_text = standardize_name_late_of(applicant_text)
+    return applicant_text.strip()  # no leading or trailing whitespace
 
 
 def split_first_name(in_name):

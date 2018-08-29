@@ -23,6 +23,8 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
     global INVENTORS_DICT
     if not state or not ln or not fn or not city:
         return
+    if len(state) != 2:  # not a real state
+        return
     if mn:
         mi = mn[0]
     else:
@@ -48,7 +50,7 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
 
 
 def create_inventor_json(directories, working_dir):
-    hold_data_path = os.path.join(working_dir, 'xml_data/')
+    hold_data_path = os.path.join(working_dir, 'data/xml_data/')
     grant_year_re = re.compile('i?pgb([0-9]{4})')
     xml_directories = glob.glob(directories + '/*.bz2')
     for xml_directory in xml_directories:

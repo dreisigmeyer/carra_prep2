@@ -3,6 +3,7 @@
 from difflib import SequenceMatcher as SeqMatcher
 import json
 import os
+from preprocessing.gbd_metadata.src.city_names import create_city_json
 from preprocessing.gbd_metadata.src.inventor_names import create_inventor_json
 import sys
 import xmltodict
@@ -76,11 +77,7 @@ def zips_xml_to_json(xml_file, json_file):
 def make_gbd_metadata(xml_files):
     '''
     '''
-# if __name__ == '__main__':
-    # cd_str = '{FP}/create_GBD_metadata/cleanCityNames/'.format(FP=fp_dir)
-    # os.chdir(cd_str)
-    # subprocess.call(['perl', 'cleanCityNames.pl'])
-
+    create_city_json(THIS_DIR)
     create_inventor_json(xml_files, THIS_DIR)
 
     # os.chdir(cw_dir)
