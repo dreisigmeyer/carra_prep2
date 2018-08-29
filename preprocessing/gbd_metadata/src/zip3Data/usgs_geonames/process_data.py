@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import codecs, os
+import codecs
+import os
 from ...helperFunctions import helper_funs as HF
 
 file_dir = os.path.dirname(os.path.relpath(__file__))
@@ -11,19 +12,19 @@ This is data from http://geonames.usgs.gov/domestic/download_data.htm "All Names
 
 FEATURE_ID|FEATURE_NAME
 
-** FEATURE_ID: 	
+** FEATURE_ID:
 Permanent, unique feature record identifier and official feature name as defined in INCITS 446-2008
-** FEATURE_NAME:	
+** FEATURE_NAME:
 Permanent official feature name as defined in INCITS 446-2008 as well as alternate spellings
 
 """
-#awk -F'|' -v OFS='|' '{print $1, $2}' AllNames_*.txt > alternate_names.csv && \ # replace with cut
+# awk -F'|' -v OFS='|' '{print $1, $2}' AllNames_*.txt > alternate_names.csv && \ # replace with cut
 alias_cmd = """
 cut -d'|' -f1,2 AllNames_*.txt > alternate_names.csv && \
 sed -i '1d' alternate_names.csv && \
 sed -i 's/Census Designated Place//g' alternate_names.csv
 """
-os.system(alias_cmd);
+os.system(alias_cmd)
 
 """
 This is data from geonames.usgs.gov/domestic/download_data.htm "AllStateFedCodes" and gives us:
@@ -32,18 +33,18 @@ GEOID|FEATURE_ID|STATE_ALPHA|FEATURE_NAME|FIPS
 
 ** STATE_NUMERIC (State FIPS) + CENSUS_CODE (Place FIPS):
 The unique two number code for a US State as specified in INCITS 38:200x, (Formerly FIPS 5-2)
-The unique two number code and the unique two letter alphabetic code for a US State as specified in 
+The unique two number code and the unique two letter alphabetic code for a US State as specified in
 INCITS 38:200x, (Formerly FIPS 5-2)
 The two combined give us the GEOID (see below)
-** FEATURE_ID: 	
+** FEATURE_ID:
 Permanent, unique feature record identifier and official feature name as defined in INCITS 446-2008
-** STATE_ALPHA: 	
-The unique two letter alphabetic code for a US State as specified in INCITS 38:200x, (Formerly FIPS 5-2) 
-** FEATURE_NAME:	
+** STATE_ALPHA:
+The unique two letter alphabetic code for a US State as specified in INCITS 38:200x, (Formerly FIPS 5-2)
+** FEATURE_NAME:
 Permanent official feature name as defined in INCITS 446-2008
 ** STATE_NUMERIC (State FIPS) + COUNTY_NUMERIC (County FIPS):
 The unique two number code for a US State as specified in INCITS 38:200x, (Formerly FIPS 5-2)
-The unique three number code for a county or county equivalent as specified in INCITS 31:200x, 
+The unique three number code for a county or county equivalent as specified in INCITS 31:200x,
 (Formerly FIPS 6-4)
 Combined these give us the unique FIPS code for the county
 """
@@ -52,17 +53,17 @@ awk -F'|' -v OFS='|' '{print $8 $4, $1, $9, $2, $8 $11}' ./states/*_FedCodes_* >
 sed -i '1d' codes_names_states.csv && \
 sed -i 's/Census Designated Place//g' codes_names_states.csv
 """
-os.system(names_cmd);
+os.system(names_cmd)
 
 """
-This is data from www.census.gov/geo/maps-data/data/relationship.html "ZCTA Relationship File" 
+This is data from www.census.gov/geo/maps-data/data/relationship.html "ZCTA Relationship File"
 and gives us:
 
 GEOID|ZCTA5
 
-** GEOID: 	
+** GEOID:
 See STATE_NUMERIC (State FIPS) + CENSUS_CODE (Place FIPS) above
-** ZCTA5: 	
+** ZCTA5:
 Census ZCTA for 2010
 """
 zcta5_cmd = """
@@ -70,25 +71,25 @@ awk -F',' -v OFS='|' '{print $5, $1}' zcta_place_rel_10.txt > geoid_to_zcta5_201
 sed -i '1d' geoid_to_zcta5_2010.csv && \
 sed -i 's/Census Designated Place//g' geoid_to_zcta5_2010.csv
 """
-os.system(zcta5_cmd);
+os.system(zcta5_cmd)
 
 encoding = 'utf-8'
 
 in_file = codecs.open("geoid_to_zcta5_2010.csv", "r", encoding=encoding)
-geoid_to_zcta5 = {} # We need the geoids to link up different files
-for line in in_file:    
+geoid_to_zcta5 = {}  # We need the geoids to link up different files
+for line in in_file:
     geoid, zcta5 = line.split('|')
     geoid_to_zcta5[geoid] = zcta5[0:3]
 in_file.close()
 
 in_file = codecs.open("codes_names_states.csv", "r", encoding=encoding)
 geoid_info = {}
-fips_zip3s = {} # all of the zips in a county
-feature_to_geo_id = {} # also to link up different data files
+fips_zip3s = {}  # all of the zips in a county
+feature_to_geo_id = {}  # also to link up different data files
 for line in in_file:
     geoid, feature_id, state, name, fips = line.split('|')
     clean_name = HF.clean_it(name)
-    if geoid in geoid_to_zcta5: # get all of the zip3s in a county
+    if geoid in geoid_to_zcta5:  # get all of the zip3s in a county
         zip3 = geoid_to_zcta5[geoid]
         try:
             fips_zip3s[fips].update([zip3])

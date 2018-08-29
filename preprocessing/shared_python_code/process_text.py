@@ -1,4 +1,6 @@
+import html
 import re
+import urllib
 # import unicodedata
 
 pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
@@ -57,8 +59,10 @@ def clean_patnum(patnum):
 def standardize_name(in_str):
     '''
     '''
-    in_str = re.sub('[^a-zA-Z0-9 ]+', '', in_str)  # alphanumeric and spaces only
+    in_str = urllib.parse.unquote_plus(in_str)  # replace %xx
+    in_str = html.unescape(in_str)  # replace HTML entities
     in_str = ' '.join(in_str.split())  # single spaces only
+    in_str = ''.join(c for c in in_str if c.isalnum() or c == ' ')  # alphanumeric and spaces only
     in_str = in_str.upper()  # all upper case
     return in_str.strip()  # no leading or trailing whitespace
 
