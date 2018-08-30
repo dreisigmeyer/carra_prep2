@@ -20,42 +20,6 @@ def clean_patnum(patnum):
     return xml_pat_num, pat_num
 
 
-# def keep_letters(x):
-#     '''
-#     Only keeps unicode letters and numbers along with the spaces.
-#     '''
-#     if unicodedata.category(x)[0] in ('L', 'N', 'Z'):  # alphanumeric
-#         return x
-#     else:  # crap
-#         return u''
-
-
-# def clean_it(in_str):
-#     if isinstance(in_str, str):
-#         encoded_str = in_str.decode('utf8')
-#     else:
-#         return ''
-#     out_str = encoded_str
-#     out_str = ''.join(keep_letters(x) for x in out_str)
-#     out_str = out_str.upper()
-#     out_str = ' '.join(out_str.split())
-#     return out_str
-
-
-# def clean_up(applicant, xml_path):
-#     '''
-#     Clean up the string
-#     '''
-#     applicant_text = applicant.find(xml_path).text
-#     applicant_text = clean_it(applicant_text)
-#     # Replace utf-8 characters with their closest ascii
-#     applicant_text = unicodedata.normalize('NFKD', applicant_text)
-#     applicant_text = applicant_text.encode('ascii', 'ignore')
-#     applicant_text = re.sub('\s*LATE\s+OF\s*', '', applicant_text)
-#     applicant_text = re.sub('[^a-zA-Z0-9 ]+', '', applicant_text).upper()
-#     return applicant_text.strip()
-
-
 def standardize_name(in_str):
     '''
     This cleans and standardizes strings, removing HTML and URL encodings.
@@ -74,8 +38,8 @@ def standardize_name_late_of(in_str):
     '''
     '''
     in_str = standardize_name(in_str)
-    in_str = re.sub('\s*LATE\s+OF\s*', '', in_str)  # deceased inventors
-    return in_str.strip()  # no leading or trailing whitespace
+    in_str = re.sub('\s*LATE\s*OF\s*', '', in_str)  # deceased inventors
+    return in_str.strip()
 
 
 def clean_up_inventor_name(applicant, xml_path):
@@ -83,7 +47,15 @@ def clean_up_inventor_name(applicant, xml_path):
     '''
     applicant_text = applicant.find(xml_path).text
     applicant_text = standardize_name_late_of(applicant_text)
-    return applicant_text.strip()  # no leading or trailing whitespace
+    return applicant_text.strip()
+
+
+def standardize_name_cdp(in_str):
+    '''
+    '''
+    in_str = standardize_name(in_str)
+    in_str = re.sub('\s*Census\s*Designated\s*Place\s*', '', in_str)
+    return in_str.strip()
 
 
 def split_first_name(in_name):

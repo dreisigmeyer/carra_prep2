@@ -13,7 +13,7 @@ nohup*
 !close_city_spellings.json
 *.dat
 *.csv
-INV_COUNTY_00_15.TXT
-INVENTOR_15.TXT
+INV_COUNTY_*.TXT
+INVENTOR_*.TXT
 __pycache__/
 outputs/

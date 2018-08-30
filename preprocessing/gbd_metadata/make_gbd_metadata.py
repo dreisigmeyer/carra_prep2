@@ -4,6 +4,7 @@ from difflib import SequenceMatcher as SeqMatcher
 import json
 import os
 from preprocessing.gbd_metadata.src.city_names import create_city_json
+from preprocessing.gbd_metadata.src.city_state_to_zip3 import create_zip3_mapping
 from preprocessing.gbd_metadata.src.inventor_names import create_inventor_json
 import sys
 import xmltodict
@@ -77,12 +78,10 @@ def zips_xml_to_json(xml_file, json_file):
 def make_gbd_metadata(xml_files):
     '''
     '''
-    create_city_json(THIS_DIR)
-    create_inventor_json(xml_files, THIS_DIR)
+    # create_city_json(THIS_DIR)
+    # create_inventor_json(xml_files, THIS_DIR)
+    create_zip3_mapping(THIS_DIR)
 
-    # os.chdir(cw_dir)
-    # process_data = 'python -m {BD}.create_GBD_metadata.zip3Data.usgs_geonames.process_data'.format(BD=base_dir)
-    # os.system(process_data)
 
     # parse_post_offices = 'python -m {BD}.create_GBD_metadata.zip3Data.parse_post_offices post_offices'.format(BD=base_dir)
     # os.system(parse_post_offices)

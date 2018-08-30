@@ -1,4 +1,4 @@
 AllNames_*.txt.bz2 filter=lfs diff=lfs merge=lfs -text
 infobox_properties_en.nt.bz2 filter=lfs diff=lfs merge=lfs -text
-INV_COUNTY_00_15.TXT.bz2 filter=lfs diff=lfs merge=lfs -text
-INVENTOR_15.TXT.bz2 filter=lfs diff=lfs merge=lfs -text
+INV_COUNTY_*.TXT.bz2 filter=lfs diff=lfs merge=lfs -text
+INVENTOR_*.TXT.bz2 filter=lfs diff=lfs merge=lfs -text

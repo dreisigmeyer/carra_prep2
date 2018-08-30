@@ -9,15 +9,20 @@
     * The "All Names" file from the Topical Gazetteers from 
     https://geonames.usgs.gov/domestic/download_data.htm.
     Unzip it and place it in **preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/**.
+    There may be some issues with null bytes in the "All Names" file.
+    It is suggested to run  
+    `tr < AllNames_*.txt -d '\000' > holder`  
+    and then replace the "All Names" file with holder.
+    The included _AllNames\_*.txt_ has been preprocessed.
     * The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
     These files are placed in **preprocessing/gbd_metadata/data/uspto_data/**.
 
 2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to 
     run  
-    `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INV_COUNTY_00_15.TXT.bz2`  
-    `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INVENTOR_15.TXT.bz2`  
+    `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INV_COUNTY_*.TXT.bz2`  
+    `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INVENTOR_*.TXT.bz2`  
 	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/infobox_properties_en.nt.bz2`  
-	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
+	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/*.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
 
 3.	In **dat_to_xml** and **xml_rewrite** run  
