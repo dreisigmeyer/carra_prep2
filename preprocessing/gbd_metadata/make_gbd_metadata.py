@@ -81,31 +81,3 @@ def make_gbd_metadata(xml_files):
     # create_city_json(THIS_DIR)
     # create_inventor_json(xml_files, THIS_DIR)
     create_zip3_mapping(THIS_DIR)
-
-
-    # parser = '''
-    # python -m {BD}.create_GBD_metadata.zip3Data.parser sparql_query_results.csv infobox_properties_en.nt
-    # '''.format(BD=base_dir)
-    # os.system(parser)
-
-    # zip3_cities = 'python -m {BD}.create_GBD_metadata.zip3Data.zip3_cities'.format(BD=base_dir)
-    # os.system(zip3_cities)
-
-    # city_xslt = 'python -m {BD}.create_GBD_metadata.zip3Data.city_xslt'.format(BD=base_dir)
-    # os.system(city_xslt)
-
-    # os.remove(base_dir + '/create_GBD_metadata/zip3Data/us_towns.csv')
-    # os.remove(base_dir + '/create_GBD_metadata/zip3Data/post_office_zips.csv')
-    # os.remove(base_dir + '/create_GBD_metadata/zip3Data/usgs_zcta5.csv')
-    # os.remove(base_dir + '/create_GBD_metadata/zip3Data/hold_zip3_cities.xml')
-
-    # zip3_final = '''
-    # iconv -f UTF-8 -t ASCII//TRANSLIT < {BD}/zip3_cities.xml > {BD}/ASCII_zip3_cities.xml
-    # '''.format(BD=base_dir, CD=cw_dir)
-    # os.system(zip3_final)
-    # os.remove(base_dir + '/zip3_cities.xml')
-    # zips_xml_to_json(base_dir + '/ASCII_zip3_cities.xml', base_dir + '/zip3_cities.json')
-    # os.remove(base_dir + '/ASCII_zip3_cities.xml')
-    # init_close_city_spellings(base_dir + '/zip3_cities.json',
-    #                           base_dir + '/cityMisspellings.json',
-    #                           base_dir + '/close_city_spellings.json')

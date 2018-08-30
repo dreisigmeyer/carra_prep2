@@ -140,6 +140,33 @@ def read_sparql_line(line):
     return
 
 
+def read_dbpedia_line(line):
+    '''
+    '''
+    city, state, zip3 = line[0], line[1], line[2]
+    city = standardize_name_cdp(city)
+    state = standardize_name_cdp(state)
+    if len(zip3) == 4:  # lacking a leading 0
+        zip3 = '0' + zip3[:2]
+    elif len(zip3) == 5:
+        zip3 = zip3[:3]
+    else:  # can't be a zipcode
+        return
+    if state in ST_ABBREVS:
+        abbrev = ST_ABBREVS[state]
+        update_zip3_mapping(abbrev, city, zip3)
+    return
+
+
+def read_other_line(line):
+    '''
+    '''
+    city, abbrev, zip3 = line[0], line[1], line[2]
+    zip3 = zip3[:3]
+    update_zip3_mapping(abbrev, city, zip3)
+    return
+
+
 def read_allname_line(line):
     '''
     This collects alternate names for each geoid.
@@ -196,11 +223,18 @@ def create_zip3_mapping(working_dir):
     usgs_data_path = os.path.join(working_dir, 'data/usgs_data/')
     states_data_path = os.path.join(usgs_data_path, 'states/')
     zipcode_data_path = os.path.join(working_dir, 'data/zipcode_data/')
+    user_data_path = os.path.join(working_dir, 'data/user_data/')
     allnames_data = glob.glob(usgs_data_path + 'AllNames_*.txt')[0]
     zcta_data = glob.glob(usgs_data_path + 'zcta_place_rel_*.txt')[0]
     states_data = glob.glob(states_data_path + '*_FedCodes_*.txt')
     usps_data = glob.glob(zipcode_data_path + 'post_offices/*.html')
     sparql_data = glob.glob(zipcode_data_path + 'sparql_query_results.csv')[0]
+    dbpedia_data = glob.glob(zipcode_data_path + 'infobox_postalcodes_en.csv')[0]
+    free_zipcode_data = glob.glob(zipcode_data_path + 'free-zipcode-database.csv')[0]
+    post_office_data = glob.glob(zipcode_data_path + 'post_office_zips.csv')[0]
+    additional_zips = glob.glob(user_data_path + 'additional_zips.csv')[0]
+
+    # start by using the usgs geoid
     with open(zcta_data) as csv_file:  # get the zip3s for each geoid
         zcta_reader = csv_reader_skip_headers(csv_file)
         for line in zcta_reader:
@@ -217,13 +251,33 @@ def create_zip3_mapping(working_dir):
                 read_allname_line(line)
         except Exception as e:
             pass
-    state_city_to_zip3()  # create the final mapping
-    for state_html in usps_data:
+    state_city_to_zip3()  # create the final mapping from the geoids
+
+    # now start updating the mapping with other sources
+    for state_html in usps_data:  # from the usps
         process_state_html(state_html)
-    with open(sparql_data) as csv_file:
+    with open(sparql_data) as csv_file:  # sparql query
         sparql_reader = csv.reader(csv_file)
         for line in sparql_reader:
             read_sparql_line(line)
+    with open(dbpedia_data) as csv_file:  # DBPedia
+        dbpedia_reader = csv.reader(csv_file)
+        for line in dbpedia_reader:
+            read_dbpedia_line(line)
+    with open(free_zipcode_data) as csv_file:  # free-zipcode file
+        free_zipcode_reader = csv.reader(csv_file, delimiter='|')
+        for line in free_zipcode_reader:
+            read_other_line(line)
+    with open(post_office_data) as csv_file:  # post office locations
+        post_office_reader = csv.reader(csv_file, delimiter='|')
+        for line in post_office_reader:
+            read_other_line(line)
+    with open(additional_zips) as csv_file:  # user supplied
+        additional_zips_reader = csv.reader(csv_file, delimiter='|')
+        for line in additional_zips_reader:
+            read_other_line(line)
+
+    # now expand things by substituting common abbreviations
 
     with open('city_state_to_zip3.json', 'w') as json_file:
         json.dump(STATE_CITY_ZIP3, json_file, ensure_ascii=False, indent=4)
