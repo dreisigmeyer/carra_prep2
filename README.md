@@ -3,21 +3,21 @@
     * http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2 
     unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). 
     DBPedia changed the name from earlier releases.
-    Put the file into **create_GBD_metadata/python_code/zip3Data/**.
+    Put the file into **preprocessing/gbd_metadata/src/zip3Data/**.
     This is the latest version that works with the code.
     DBPedia switched to ttl format after the 2015-04 release.
     * The "All Names" file from the Topical Gazetteers from 
     https://geonames.usgs.gov/domestic/download_data.htm.
-    Unzip it and place it in **create_GBD_metadata/python_code/zip3Data/usgs_geonames/**.
+    Unzip it and place it in **preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/**.
     * The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
-    These files are placed in **create_GBD_metadata/python_code/usptoData/**.
+    These files are placed in **preprocessing/gbd_metadata/data/uspto_data/**.
 
 2.	If you do have git-lfs and pulled this for the first time from this directory you'll need to 
     run  
-    `bzip2 -dk create_GBD_metadata/python_code/usptoData/INV_COUNTY_00_15.TXT.bz2`  
-    `bzip2 -dk create_GBD_metadata/python_code/usptoData/INVENTOR_15.TXT.bz2`  
-	`bzip2 -dk create_GBD_metadata/python_code/zip3Data/infobox_properties_en.nt.bz2`  
-	`bzip2 -dk create_GBD_metadata/python_code/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
+    `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INV_COUNTY_00_15.TXT.bz2`  
+    `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INVENTOR_15.TXT.bz2`  
+	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/infobox_properties_en.nt.bz2`  
+	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/AllNames_20180401.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
 
 3.	In **dat_to_xml** and **xml_rewrite** run  
@@ -34,14 +34,16 @@ The code was run with a standard Anaconda Python 3 environment (https://www.anac
 After getting the data and setting up the Python environment,
 the entire process that follows can be run with the convenience script  
 `nohup ./doitall.sh &`  
-* The outputs in **for_carra/outData/** are post-processed and then sent to CARRA for PIKing.
-* The file _metadata.csv_ is used later for triangulation.
-* From **create_GBD_metadata/** the files
+* The outputs in **outputs/for_carra/** are post-processed and then sent to CARRA for PIKing.
+* The file _metadata.csv_ in **outputs/csv_output/** is used later for triangulation.
+* From **outputs/json_output** the files
 _zip3\_cities.json_,
 _cityMispellings.json_,
 _inventors.json_ and
 _close_city_spellings.json_
 are also used later.
+* **outputs/xml_output** contains the XML data where we have **xml_with_inventors/** and
+**xml_without_inventors/**.
 
 ## Running individual pieces of the code
 1.	See the _README.md_ in **dat_to_xml**.  
@@ -50,20 +52,20 @@ are also used later.
 2.	See the _README.md_ in **xml_rewrite**.  
 	> This doesn't depend on any other piece of the code.
 
-3.	**create_GBD_metadata** is run to generate JSON files
-	for attaching zip3s, correcting city-state information, etc.
-	From this directory (i.e., where this README file is located at) issue the command  
-	`nohup python -m create_GBD_metadata &`  
-	The files 
-	_zip3\_cities.json_, 
-	_cityMispellings.json_, 
-	_inventors.json_ and
+3.	The **preprocessing** module collects together patent metadata and prepares the dat
+	XML files for sending to CARRA.
+	Many of the intermediate files may be of value as well.
+- 	**gbd_metadata** is run to generate JSON files
+	for attaching zip3s, and correcting city-state and inventor information.
+	The files in **outputs/json_outpt** are  
+	_zip3\_cities.json_,  
+	_city_mispellings.json_: contains various misspellings of city+state combinations,  
+	_inventors.json_ : contains all city+state combinations for inventors base on last, 
+	first and middle names and  
 	_close_city_spellings.json_
-	are copied into **for_carra/parse_GBD/**.
-	These are also used later for triangulation.  
 	> This doesn't depend on any other piece of the code.
 
-4.	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
+-	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
@@ -78,7 +80,7 @@ are also used later.
 	PIKing.  
 	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.
 
-5.	**patent_metadata** collects some basic information about each patent.
+-	**patent_metadata** collects some basic information about each patent.
 	In **patent_metadata** run:  
 	`nohup ./run_it.sh &`  
 	which calls _./create\_patent\_metadata.py 5_ where 5 is the number of processes to run.
