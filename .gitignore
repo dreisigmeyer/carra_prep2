@@ -12,6 +12,10 @@ nohup*
 !close_city_spellings.json
 *.dat
 *.csv
+!free-zipcode-database.csv
+!infobox_postalcodes_en.csv
+!post_office_zips.csv
+!sparql_query_results.csv
 INV_COUNTY_*.TXT
 INVENTOR_*.TXT
 __pycache__/
