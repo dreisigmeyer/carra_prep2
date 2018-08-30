@@ -1,11 +1,5 @@
 ## Getting the data
 1.	If you don't have git-lfs you'll need to download:
-    * http://downloads.dbpedia.org/2015-04/core/infobox-properties_en.nt.bz2 
-    unzip it and rename it infobox_properties_en.nt (a '-' to an '_'). 
-    DBPedia changed the name from earlier releases.
-    Put the file into **preprocessing/gbd_metadata/src/zip3Data/**.
-    This is the latest version that works with the code.
-    DBPedia switched to ttl format after the 2015-04 release.
     * The "All Names" file from the Topical Gazetteers from 
     https://geonames.usgs.gov/domestic/download_data.htm.
     Unzip it and place it in **preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/**.
@@ -21,7 +15,6 @@
     run  
     `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INV_COUNTY_*.TXT.bz2`  
     `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INVENTOR_*.TXT.bz2`  
-	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/infobox_properties_en.nt.bz2`  
 	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/*.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
 

@@ -4,7 +4,10 @@
 Parse the DBpedia dump.
 """
 
-import codecs, os, re, sys
+import codecs
+import os
+import re
+import sys
 from subprocess import Popen, PIPE
 from ..helperFunctions import helper_funs as HF
 
@@ -117,24 +120,25 @@ abbrevs = {
     "WYOMING": "WY"
 }
 
-sed_str="""sed '1d' sparql_query_results.csv |\\
+sed_str = """sed '1d' sparql_query_results.csv |\\
 sed 's/\\"\\"\\"//g' |\\
 sed 's/\\"\\"^^<http:\\/\\/www.w3.org\\/2001\\/XMLSchema#integer>\\"//g' |\\
 sed 's/\\"<http:\\/\\/dbpedia.org\\/resource\\///g' |\\
 sed 's/>\\"//g' > ./holder.csv
 """
 os.system(sed_str)
-    
+
+
 def process_line_sparql(in_line):
     """
     Puts the SPARQL query line into a different format
-    """    
-    line = in_line.split(',')    
+    """
+    line = in_line.split(',')
     zip_code = line[0].strip()
-    city = line[1].strip()    
+    city = line[1].strip()
     city = HF.clean_it(city)
     state = line[-1].strip()
-    state = HF.clean_it(state)    
+    state = HF.clean_it(state)
     abbrev = abbrevs[state]
     if len(zip_code) > 5:
         raise Exception('Zipcode is too long.')
@@ -143,7 +147,8 @@ def process_line_sparql(in_line):
     else:
         zip3 = zip_code.zfill(5)[0:3]
         return '|'.join([city, abbrev, zip3])
-    
+
+
 def process_line_dbpedia(in_line):
     """
     Puts the DBpedia line into a different format
@@ -153,8 +158,8 @@ def process_line_dbpedia(in_line):
     city = city_array[0]
     city = HF.clean_it(city)
     state = city_array[-1]
-    state = HF.clean_it(state)    
-    abbrev = abbrevs[state]        
+    state = HF.clean_it(state)
+    abbrev = abbrevs[state]
     zip_code = re.search('(?<=").*(?="\^\^<http://www.w3.org/2001/XMLSchema#int>)', in_line).group(0)
     if len(zip_code) > 5:
         raise Exception('Zipcode is too long.')
@@ -163,7 +168,8 @@ def process_line_dbpedia(in_line):
     else:
         zip3 = zip_code.zfill(5)[0:3]
         return '|'.join([city, abbrev, zip3])
-  
+
+
 encoding = 'utf-8'
 out_file = codecs.open("to_remove.csv", "w", encoding=encoding)
 
@@ -181,10 +187,10 @@ file_str = sys.argv[2]
 for state in states:
     grep_str = state + ".*postalCode>.*<http://www.w3.org/2001/XMLSchema#int>"
     results = Popen(['grep', '-i', grep_str, file_str], stdout=PIPE).communicate()[0]
-    for line in results.split('\n'):        
+    for line in results.split('\n'):
         try:
             holder = process_line_dbpedia(line)
-        except Exception:        
+        except Exception:
             continue
         out_file.write(holder + "\n")
 out_file.close()

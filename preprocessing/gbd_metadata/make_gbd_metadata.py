@@ -83,9 +83,6 @@ def make_gbd_metadata(xml_files):
     create_zip3_mapping(THIS_DIR)
 
 
-    # parse_post_offices = 'python -m {BD}.create_GBD_metadata.zip3Data.parse_post_offices post_offices'.format(BD=base_dir)
-    # os.system(parse_post_offices)
-
     # parser = '''
     # python -m {BD}.create_GBD_metadata.zip3Data.parser sparql_query_results.csv infobox_properties_en.nt
     # '''.format(BD=base_dir)
