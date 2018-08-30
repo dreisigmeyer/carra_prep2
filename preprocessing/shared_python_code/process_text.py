@@ -58,6 +58,9 @@ def clean_patnum(patnum):
 
 def standardize_name(in_str):
     '''
+    This cleans and standardizes strings, removing HTML and URL encodings.
+    It keeps any UTF8 chracters and numbers and replaces all whitespace
+    with a single space.  The returned string is not necessarily ASCII.
     '''
     in_str = urllib.parse.unquote_plus(in_str)  # replace %xx
     in_str = html.unescape(in_str)  # replace HTML entities
