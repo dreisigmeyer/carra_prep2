@@ -4,6 +4,7 @@ import json
 from lxml import etree
 import os
 from preprocessing.shared_python_code.process_text import standardize_name_cdp
+import re
 
 GEOID_TO_ZIP3 = dict()  # We need the geoids to link up different files
 GEOID_INFO = dict()
@@ -63,6 +64,38 @@ ST_ABBREVS = {
     "WISCONSIN": "WI",
     "WYOMING": "WY"
 }
+
+
+def create_abbreviations(line):
+    '''
+    Expands abbreviations or creates them
+    '''
+    global STATE_CITY_ZIP3
+
+    def insert_new_city(abbrev_re, word, state, city):
+        '''
+        Actually inserts the new abbreviations correctly
+        '''
+        global STATE_CITY_ZIP3
+        if re.search(abbrev_re, city):
+            new_city = re.sub(abbrev_re, word, city)
+            print('New city name is : ' + new_city + ' in state ' + state)
+            if new_city in STATE_CITY_ZIP3[state]:
+                for zip3 in STATE_CITY_ZIP3[state][city]:
+                    if zip3 not in STATE_CITY_ZIP3[state][new_city]:
+                        STATE_CITY_ZIP3[state][new_city].append(zip3)
+            else:
+                STATE_CITY_ZIP3[state][new_city] = STATE_CITY_ZIP3[state][city]
+
+    abbrev, word = line[0], line[1]
+    abbrev_re = '\\b' + abbrev + '\\b'
+    word_re = '\\b' + word + '\\b'
+    states = [*STATE_CITY_ZIP3]
+    for state in states:
+        cities = [*STATE_CITY_ZIP3[state]]
+        for city in cities:
+            insert_new_city(abbrev_re, word, state, city)
+            insert_new_city(word_re, abbrev, state, city)
 
 
 def csv_reader_skip_headers(in_file, delimiter=','):
@@ -233,6 +266,7 @@ def create_zip3_mapping(working_dir):
     free_zipcode_data = glob.glob(zipcode_data_path + 'free-zipcode-database.csv')[0]
     post_office_data = glob.glob(zipcode_data_path + 'post_office_zips.csv')[0]
     additional_zips = glob.glob(user_data_path + 'additional_zips.csv')[0]
+    abbreviations = glob.glob(user_data_path + 'abbreviations.csv')[0]
 
     # start by using the usgs geoid
     with open(zcta_data) as csv_file:  # get the zip3s for each geoid
@@ -278,7 +312,10 @@ def create_zip3_mapping(working_dir):
             read_other_line(line)
 
     # now expand things by substituting common abbreviations
-    
+    with open(abbreviations) as csv_file:  # sparql query
+        abbrevs_reader = csv.reader(csv_file)
+        for line in abbrevs_reader:
+            create_abbreviations(line)
 
     with open('city_state_to_zip3.json', 'w') as json_file:
         json.dump(STATE_CITY_ZIP3, json_file, ensure_ascii=False, indent=4)
