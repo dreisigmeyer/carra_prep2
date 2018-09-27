@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from difflib import SequenceMatcher as SeqMatcher
 import json
 import os
@@ -9,9 +7,6 @@ from preprocessing.gbd_metadata.src.inventor_names import create_inventor_json
 import sys
 import xmltodict
 
-# base_dir = 'create_GBD_metadata'
-# cw_dir = os.getcwd()
-# fp_dir = cw_dir + '/' + base_dir
 CLOSE_CITY_SPELLINGS = {}
 xml_files = sys.argv[1]
 THIS_DIR = os.path.dirname(__file__)
@@ -78,6 +73,6 @@ def zips_xml_to_json(xml_file, json_file):
 def make_gbd_metadata(xml_files):
     '''
     '''
-    # create_city_json(THIS_DIR)
-    # create_inventor_json(xml_files, THIS_DIR)
+    create_city_json(THIS_DIR)
+    create_inventor_json(xml_files, THIS_DIR)
     create_zip3_mapping(THIS_DIR)

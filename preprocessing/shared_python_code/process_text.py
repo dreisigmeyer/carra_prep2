@@ -1,8 +1,9 @@
 import html
 import re
 import urllib
-# import unicodedata
 
+dateFormat = '%Y%m%d'  # The dates are expected in %Y%m%d format
+grant_year_re = grant_year_re = re.compile('i?pgb([0-9]{4})')
 pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 
 

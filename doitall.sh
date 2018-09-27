@@ -16,7 +16,7 @@ mv dat_to_xml/xml_files/*.bz2  outputs/xml_output/xml_with_inventors/
 mv xml_rewrite/rewriter/original_xml_files/*.bz2  outputs/xml_output/xml_with_inventors/
 mv dat_to_xml/modified_xml_files/*.bz2  outputs/xml_output/xml_without_inventors/
 mv xml_rewrite/rewriter/modified_xml_files/*.bz2  outputs/xml_output/xml_without_inventors/
-python -m preprocessing outputs/xml_output/xml_with_inventors
+python -m preprocessing outputs/xml_output/xml_with_inventors $NUM_PY_THREADS
 # gather together the information needed for city misspellings, etc
 # cd create_GBD_metadata
 # ./run_it.sh ../outputs/xml_output/xml_with_inventors

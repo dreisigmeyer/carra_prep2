@@ -1,3 +1,12 @@
+from lxml import etree
+
+magic_validator = etree.XMLParser(
+    dtd_validation=False,
+    resolve_entities=False,
+    encoding='utf-8',
+    recover=True)
+
+
 def assg_xml_paths(grant_year):
     '''
     '''
@@ -80,3 +89,12 @@ def inv_rel_xml_paths(grant_year):
     else:
         raise UserWarning('Incorrect grant year: ' + str(grant_year))
     return app_ln, app_fn, app_city, app_state, assg_state
+
+
+def metadata_xml_paths(grant_year):
+    '''
+    '''
+    _, grant_date, _, _, _, _, _, _, _ = assg_xml_paths(grant_year)
+    _, _, _, app_state, _ = inv_rel_xml_paths(grant_year)
+    prdn, app_date, app_alt1, app_alt2, inv_alt1, inv_alt2, assg = inv_xml_paths(grant_year)
+    return prdn, grant_date, app_date, app_alt1, app_alt2, inv_alt1, inv_alt2, assg, app_state

@@ -1,19 +1,20 @@
-import tarfile
 import glob
 import json
 from lxml import etree
 import os
 from preprocessing.shared_python_code.inventor_info import get_inventor_info
 from preprocessing.shared_python_code.xml_paths import inv_xml_paths
+from preprocessing.shared_python_code.xml_paths import magic_validator
 import re
 import shutil
+import tarfile
 
 INVENTORS_DICT = dict()
-magic_validator = etree.XMLParser(
-    dtd_validation=False,
-    resolve_entities=False,
-    encoding='utf-8',
-    recover=True)
+# magic_validator = etree.XMLParser(
+#     dtd_validation=False,
+#     resolve_entities=False,
+#     encoding='utf-8',
+#     recover=True)
 
 
 def add_to_inventors_dict(ln, fn, mn, city, state):
@@ -75,7 +76,7 @@ def xml_to_json_doc(xml_doc, grant_year):
     if root.find(path_apps_alt1) is not None:
         path_applicants = path_apps_alt1
     elif path_apps_alt2 and root.find(path_apps_alt2) is not None:
-            path_applicants = path_apps_alt2
+        path_applicants = path_apps_alt2
     else:
         return
     applicants = root.findall(path_applicants)
