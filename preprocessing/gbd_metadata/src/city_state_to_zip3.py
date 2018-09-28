@@ -79,7 +79,6 @@ def create_abbreviations(line):
         global STATE_CITY_ZIP3
         if re.search(abbrev_re, city):
             new_city = re.sub(abbrev_re, word, city)
-            print('New city name is : ' + new_city + ' in state ' + state)
             if new_city in STATE_CITY_ZIP3[state]:
                 for zip3 in STATE_CITY_ZIP3[state][city]:
                     if zip3 not in STATE_CITY_ZIP3[state][new_city]:

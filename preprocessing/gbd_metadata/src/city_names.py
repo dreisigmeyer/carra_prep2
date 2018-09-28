@@ -97,7 +97,6 @@ def create_city_json(working_dir):
             city = standardize_name_late_of(city)
             prdn = clean_patnum(prdn)[0]
             add_to_inventors_dict(prdn, inv_seq, state, city, alias=True)
-    # print(INVENTORS_DICT)
     for prdn in INVENTORS_DICT:
         for inv_seq in INVENTORS_DICT[prdn]:
             state = INVENTORS_DICT[prdn][inv_seq]['state']

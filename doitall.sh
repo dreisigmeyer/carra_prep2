@@ -29,6 +29,6 @@ python -m preprocessing outputs/xml_output/xml_with_inventors $NUM_PY_THREADS
 # cd patent_metadata
 # ./run_it.sh $NUM_PY_THREADS
 # cd ../
-mv preprocessing/carra_files/out_data/*.csv outputs/for_carra
+# mv preprocessing/carra_files/out_data/*.csv outputs/for_carra
 mv *.json outputs/json_output
 mv preprocessing/patent_metadata/prdn_metadata.csv outputs/csv_output/
