@@ -55,7 +55,7 @@ are also used later.
 	Many of the intermediate files may be of value as well.
 - 	**gbd_metadata** is run to generate JSON files
 	for attaching zip3s, and correcting city-state and inventor information.
-	The files in **outputs/json_outpt** are  
+	The files in **outputs/json_output/** are  
 	_zip3\_cities.json_,  
 	_city_mispellings.json_: contains various misspellings of city+state combinations,  
 	_inventors.json_ : contains all city+state combinations for inventors base on last, 
@@ -68,10 +68,10 @@ are also used later.
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
 	* attach zip3s to the inventors' cities.  
-	The resulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for 
+	The resulting files in **outputs/for_carra/** are post-processed and then sent to CARRA for 
 	PIKing.  
 	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.
 
 -	**patent_metadata** collects some basic information about each patent.
-	The final _prdn\_metadata.csv_ file is used later for triangulation.  
+	The final **outputs/csv_output/prdn_metadata.csv** file is used later for triangulation.  
 	> This depends on the output of **dat_to_xml** and **xml_rewrite**.
