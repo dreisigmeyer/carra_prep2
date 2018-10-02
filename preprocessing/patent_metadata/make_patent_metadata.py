@@ -10,11 +10,12 @@ from preprocessing.shared_python_code.process_text import grant_year_re
 from preprocessing.shared_python_code.utility_functons import split_seq
 from preprocessing.shared_python_code.xml_paths import magic_validator
 from preprocessing.shared_python_code.xml_paths import metadata_xml_paths
-import re
 import shutil
 import tarfile
 
 THIS_DIR = os.path.dirname(__file__)
+hold_folder_path = THIS_DIR + '/hold_data/'
+out_folder_path = THIS_DIR + '/out_data/'
 
 
 def get_info(files):
@@ -22,19 +23,18 @@ def get_info(files):
     '''
     for file in files:
         folder_name = os.path.basename(file).split('.')[0]
-        out_csv_file = './out_data/' + folder_name + '.csv'
+        out_csv_file = out_folder_path + folder_name + '.csv'
         grant_year_GBD = int(grant_year_re.match(folder_name).group(1))
         with open(out_csv_file, 'w') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=',')
             # Get data in and ready
-            hold_folder_path = THIS_DIR + '/hold_data/' + folder_name
-            os.mkdir(hold_folder_path)
+            xml_data_path = hold_folder_path + folder_name
             with tarfile.open(name=file, mode='r:bz2') as tar_file:
                 tar_file.extractall(path=hold_folder_path)
-                xml_split = glob.glob(hold_folder_path + '/*.xml')
+                xml_split = glob.glob(xml_data_path + '/*.xml')
                 for xml_doc in xml_split:
                     process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name)
-            shutil.rmtree(hold_folder_path)
+            shutil.rmtree(xml_data_path)
 
 
 def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
@@ -72,7 +72,6 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
 
     all_xml_paths = metadata_xml_paths(grant_year_GBD)
     path_patent_number = all_xml_paths[0]
-    path_grant_date = all_xml_paths[1]
     path_app_date = all_xml_paths[2]
     path_applicants_alt1 = all_xml_paths[3]
     path_applicants_alt2 = all_xml_paths[4]
@@ -87,17 +86,7 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
         xml_patent_number, patent_number = clean_patnum(xml_patent_number)
     except Exception:  # no point in going on
         return
-    # I hand fixed some files and want the grant year from the XML
-    # for these, otherwise take the grant year from the folder name
     grant_year = grant_year_GBD
-    hand_fixed = re.match(r'fix', folder_name)
-    if (hand_fixed and hand_fixed.group(0) == 'fix'):
-        try:  # to get the application date
-            grantDate = root.find(path_grant_date).text.upper()
-            grant_year = str(datetime.strptime(grantDate, dateFormat).year)
-        except Exception:
-            grant_year = grant_year_GBD
-            pass
     appDate = ''
     appYear = ''
     try:  # to get the application date
@@ -131,3 +120,9 @@ def make_patent_metadata(xml_files, NUMBER_OF_PROCESSES):
     files_list = split_seq(files, NUMBER_OF_PROCESSES)
     p = Pool(NUMBER_OF_PROCESSES)
     p.map(get_info, files_list)
+    csv_files = glob.glob(out_folder_path + '*.csv')
+    with open('prdn_metadata.csv', 'w') as cat_file:
+        for csv_file in csv_files:
+            with open(csv_file, 'r') as in_file:
+                shutil.copyfileobj(in_file, cat_file)
+            os.remove(csv_file)
