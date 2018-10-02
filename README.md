@@ -43,7 +43,7 @@ are also used later.
 * **outputs/xml_output** contains the XML data where we have **xml_with_inventors/** and
 **xml_without_inventors/**.
 
-## Running individual pieces of the code
+## The individual pieces of the code
 1.	See the _README.md_ in **dat_to_xml**.  
 	> This doesn't depend on any other piece of the code.
 
@@ -68,20 +68,10 @@ are also used later.
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
 	* attach zip3s to the inventors' cities.  
-	
-	This lauches the number of threads specified in _\_\_main.py\_\__  
-	`NUMBER_OF_PROCESSES = 5`  
-	which you can change by editing that file.
-	In **for_carra** run:  
-	`nohup ./run_it.sh &`  
 	The resulting files in _CARRA\_2014/outData/_ are post-processed and then sent to CARRA for 
 	PIKing.  
 	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.
 
 -	**patent_metadata** collects some basic information about each patent.
-	In **patent_metadata** run:  
-	`nohup ./run_it.sh &`  
-	which calls _./create\_patent\_metadata.py 5_ where 5 is the number of processes to run.
-	You can change the processor count by editing the _run\_it.sh_ file.
 	The final _prdn\_metadata.csv_ file is used later for triangulation.  
 	> This depends on the output of **dat_to_xml** and **xml_rewrite**.
