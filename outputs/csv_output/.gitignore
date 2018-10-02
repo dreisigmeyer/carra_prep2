@@ -1,7 +1,4 @@
 # ignore everything
-*.csv
-*.json
-*.xml
-*.bz2
+*
 # except this file
 !.gitignore
