@@ -25,6 +25,8 @@ def make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json):
             inventors_dict = json.load(json_data)
         procs = []
         for chunk in files_list:
-            p = Process(target=xml_parser.assign_zip3, args=(chunk, zips_dict, cities_dict, inventors_dict,))
+            p = Process(
+                target=xml_parser.assign_zip3,
+                args=(chunk, path_to_json, zips_dict, cities_dict, inventors_dict,))
             procs.append(p)
             p.start()

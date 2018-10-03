@@ -22,3 +22,4 @@ python -m preprocessing outputs/xml_output/xml_with_inventors $NUM_PY_THREADS $P
 # mv preprocessing/carra_files/out_data/*.csv outputs/for_carra
 mv *.json outputs/json_output
 mv prdn_metadata.csv outputs/csv_output/
+mv preprocessing/carra_files/out_data/*.csv outputs/for_carra/

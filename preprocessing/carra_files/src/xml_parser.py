@@ -36,10 +36,8 @@ grant_year_re = grant_year_re = re.compile('i?pgb([0-9]{8})')
 CLOSE_CITY_SPELLINGS is a dictionary of zips of cities in the same state with a similar name.  It includes the
 zips of the city itself.  This can be updated by each process which is why we didn't create it in launch.py.
 '''
-pathToJSON = 'parse_GBD/'
-# CLOSE_CITY_SPELLINGS = {}
-with open(pathToJSON + 'close_city_spellings.json') as json_data:
-    CLOSE_CITY_SPELLINGS = json.load(json_data)
+# pathToJSON = 'parse_GBD/'
+CLOSE_CITY_SPELLINGS = {}
 
 
 def clean_patnum(patnum):
@@ -213,18 +211,10 @@ def get_zip3(applicant_state, applicant_city,
     return possible_zip3s
 
 
-def assign_zip3(files, zip3_json, cleaned_cities_json, inventor_names_json):
-    '''
-    '''
-    # init_close_city_spellings(zip3_json, cleaned_cities_json)
-    for in_file in files:
-        zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json)
-
-
 def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
     folder_name = os.path.splitext(os.path.basename(in_file))[0]
     # Get data in and ready
-    folder_path = cw_dir + '/holdData/' + folder_name + '/'
+    folder_path = cw_dir + '/hold_data/' + folder_name + '/'
     os.umask(0o777)
     os.mkdir(folder_path)
     zipped_file = zipfile.ZipFile(in_file, 'r')
@@ -380,7 +370,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         if not possible_zip3s:  # Didn't find a zip3?
             possible_zip3s.add('')  # We'll at least have the city/state
         # ## Yes this should be ASCII
-        csv_file = codecs.open('./outData/zip3s_' + app_year + '.csv', 'a', 'ascii')
+        csv_file = codecs.open('./out_data/zip3s_' + app_year + '.csv', 'a', 'ascii')
         csv_writer = csv.writer(csv_file)
         # Write results
         for new_zip3 in possible_zip3s:
@@ -444,7 +434,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             if not possible_zip3s:  # Didn't find a zip3?
                 possible_zip3s.add('')  # We'll at least have the city/state
             # ## Yes this should be ASCII
-            csv_file = codecs.open('./outData/zip3s_' + app_year + '.csv', 'a', 'ascii')
+            csv_file = codecs.open('./out_data/zip3s_' + app_year + '.csv', 'a', 'ascii')
             csv_writer = csv.writer(csv_file)
             # Write results
             for new_zip3 in possible_zip3s:
@@ -456,3 +446,13 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         # make sure we at least tried to get every applicant
         if number_applicants_to_process != applicant_counter:
             print('WARNING: Did not try to process every applicant on patent ' + patent_number)
+
+
+def assign_zip3(files, path_to_json, zip3_json, cleaned_cities_json, inventor_names_json):
+    '''
+    '''
+    global CLOSE_CITY_SPELLINGS
+    with open(path_to_json + 'close_city_spellings.json') as json_data:
+        CLOSE_CITY_SPELLINGS = json.load(json_data)
+    for in_file in files:
+        zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json)
