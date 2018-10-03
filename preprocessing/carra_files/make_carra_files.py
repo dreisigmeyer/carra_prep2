@@ -3,44 +3,28 @@
 import glob
 import json
 import os
-import random
-import sys
-import src.xmlParser as xmlParser
+import src.xml_parser as xml_parser
 from multiprocessing import Process
+from preprocessing.shared_python_code.utility_functons import split_seq
 
-
-def split_seq(seq, num_processes):
-    """
-    Slices a list into number_of_processes pieces
-    of roughly the same size
-    """
-    num_files = len(seq)
-    if num_files < num_processes:
-        num_processes = num_files
-    size = num_processes
-    newseq = []
-    splitsize = 1.0 / size * num_files
-    for i in range(size):
-        newseq.append(seq[int(round(i * splitsize)):int(round((i + 1) * splitsize))])
-    return newseq
+THIS_DIR = os.path.dirname(__file__)
 
 
 # Start processing
-number_of_processes = int(sys.argv[1])
-pathToData = 'inData/'
-pathToJSON = 'parse_GBD/'
-files = glob.glob(os.path.join(pathToData, "*.zip"))
-random.shuffle(files)  # Newer years have more granted patents
-files_list = split_seq(files, number_of_processes)
-if __name__ == '__main__':
-    with open(pathToJSON + 'zip3_cities.json') as json_data:
-        zips_dict = json.load(json_data)
-    with open(pathToJSON + 'cityMisspellings.json') as json_data:
-        cities_dict = json.load(json_data)
-    with open(pathToJSON + 'inventors.json') as json_data:
-        inventors_dict = json.load(json_data)
-    procs = []
-    for chunk in files_list:
-        p = Process(target=xmlParser.assign_zip3, args=(chunk, zips_dict, cities_dict, inventors_dict,))
-        procs.append(p)
-        p.start()
+def make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json):
+    '''
+    '''
+    files = glob.glob(os.path.join(xml_files, "*.bz2"))
+    files_list = split_seq(files, NUMBER_OF_PROCESSES)
+    if __name__ == '__main__':
+        with open(path_to_json + '/zip3_cities.json') as json_data:
+            zips_dict = json.load(json_data)
+        with open(path_to_json + '/cityMisspellings.json') as json_data:
+            cities_dict = json.load(json_data)
+        with open(path_to_json + '/inventors.json') as json_data:
+            inventors_dict = json.load(json_data)
+        procs = []
+        for chunk in files_list:
+            p = Process(target=xml_parser.assign_zip3, args=(chunk, zips_dict, cities_dict, inventors_dict,))
+            procs.append(p)
+            p.start()

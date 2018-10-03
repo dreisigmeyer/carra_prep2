@@ -4,3 +4,6 @@
 [submodule "xml_rewrite"]
 	path = xml_rewrite
 	url = git@github.com:dreisigmeyer/xml_rewrite.git
+[submodule "preprocessing/shared_python_code"]
+	path = preprocessing/shared_python_code
+	url = git@github.com:dreisigmeyer/shared_python_code.git
