@@ -6,7 +6,7 @@
     There may be some issues with null bytes in the "All Names" file.
     It is suggested to run  
     `tr < AllNames_*.txt -d '\000' > holder`  
-    and then replace the "All Names" file with holder.
+    and then replace the "All Names" file with _holder_.
     The included _AllNames\_*.txt_ has been preprocessed.
     * The _INV\_COUNTY\_YY\_YY.TXT_ and _INVENTOR\_YY.TXT_ files from the USPTO's patent data DVD.
     These files are placed in **preprocessing/gbd_metadata/data/uspto_data/**.
