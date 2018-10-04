@@ -318,3 +318,4 @@ def create_zip3_mapping(working_dir):
 
     with open('city_state_to_zip3.json', 'w') as json_file:
         json.dump(STATE_CITY_ZIP3, json_file, ensure_ascii=False, indent=4)
+        return os.path.abspath(json_file.name)

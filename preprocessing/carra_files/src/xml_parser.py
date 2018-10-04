@@ -452,7 +452,7 @@ def assign_zip3(files, path_to_json, zip3_json, cleaned_cities_json, inventor_na
     '''
     '''
     global CLOSE_CITY_SPELLINGS
-    with open(path_to_json + 'close_city_spellings.json') as json_data:
+    with open(path_to_json + '/close_city_spellings.json') as json_data:
         CLOSE_CITY_SPELLINGS = json.load(json_data)
     for in_file in files:
         zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json)

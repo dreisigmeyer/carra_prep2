@@ -66,6 +66,7 @@ def create_inventor_json(directories, working_dir):
             shutil.rmtree(hold_directory)
     with open('inventors.json', 'w') as json_file:
         json.dump(INVENTORS_DICT, json_file, ensure_ascii=False, indent=4)
+        return os.path.abspath(json_file.name)
 
 
 def xml_to_json_doc(xml_doc, grant_year):

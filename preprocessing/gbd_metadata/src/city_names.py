@@ -105,3 +105,4 @@ def create_city_json(working_dir):
                 add_to_cities_dict(state, city, alias)
     with open('city_misspellings.json', 'w') as json_file:
         json.dump(CITIES_DICT, json_file, ensure_ascii=False, indent=4)
+        return os.path.abspath(json_file.name)
