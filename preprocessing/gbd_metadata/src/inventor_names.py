@@ -86,6 +86,8 @@ def xml_to_json_doc(xml_doc, grant_year):
     for applicant in applicants:
         city, state, _, ln, suf, fn, mn = get_inventor_info(applicant, grant_year)
         ln = (ln + ' ' + suf).strip()
+        if not ln or not fn:  # no last or first name
+            continue
         add_to_inventors_dict(ln, fn, mn, city, state)
     if path_invs_alt1:  # more recent patents have the assignees as the applicants
         if root.find(path_invs_alt1) is not None:
@@ -100,4 +102,6 @@ def xml_to_json_doc(xml_doc, grant_year):
         for applicant in applicants:
             city, state, _, ln, suf, fn, mn = get_inventor_info(applicant, grant_year)
             ln = (ln + ' ' + suf).strip()
+            if not ln or not fn:  # no last or first name
+                continue
             add_to_inventors_dict(ln, fn, mn, city, state)
