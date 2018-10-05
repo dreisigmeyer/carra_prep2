@@ -20,120 +20,30 @@ import csv
 import glob
 import json
 import os
+from preprocessing.shared_python_code.process_text import clean_patnum
+from preprocessing.shared_python_code.process_text import dateFormat
+from preprocessing.shared_python_code.process_text import grant_year_re
+from preprocessing.shared_python_code.xml_paths import magic_validator
+from preprocessing.shared_python_code.xml_paths import standardize_name_late_of
+from preprocessing.shared_python_code.xml_paths import split_first_name
+from preprocessing.shared_python_code.xml_paths import split_name_suffix
 import re
-import sys
-import unicodedata
-import zipfile
+import shutil
+import tarfile
 from datetime import datetime
 from difflib import SequenceMatcher as SeqMatcher
 from lxml import etree
 
-cw_dir = sys.argv[2]
-pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
-date_format = '%Y%m%d'  # The dates are expected in %Y%m%d format
-grant_year_re = grant_year_re = re.compile('i?pgb([0-9]{8})')
+THIS_DIR = os.path.dirname(__file__)
+hold_folder_path = THIS_DIR + '/hold_data/'
+out_folder_path = THIS_DIR + '../out_data/'
+# pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 '''
 CLOSE_CITY_SPELLINGS is a dictionary of zips of cities in the same state with a similar name.  It includes the
 zips of the city itself.  This can be updated by each process which is why we didn't create it in launch.py.
 '''
 # pathToJSON = 'parse_GBD/'
 CLOSE_CITY_SPELLINGS = {}
-
-
-def clean_patnum(patnum):
-    '''
-    Removes extraneous zero padding
-    '''
-    pat_num = patnum.strip().upper()
-    hold_pat_num = pat_num_re.match(pat_num).groups()
-    pat_num_len = len(hold_pat_num[0] + hold_pat_num[1])
-    zero_padding = '0' * (7 - pat_num_len)
-    pat_num = hold_pat_num[0] + zero_padding + hold_pat_num[1]
-    zero_padding = '0' * (8 - pat_num_len)
-    xml_pat_num = hold_pat_num[0] + zero_padding + hold_pat_num[1]
-    return xml_pat_num, pat_num
-
-
-def keep_letters(x):
-    '''
-    Only keeps unicode letters and numbers along with the spaces.
-    '''
-    if unicodedata.category(x)[0] in ('L', 'N', 'Z'):  # alphanumeric
-        return x
-    else:  # crap
-        return u''
-
-
-def clean_it(in_str):
-    if isinstance(in_str, str):
-        encoded_str = in_str.decode('utf8')
-    else:
-        return ''
-    out_str = encoded_str
-    out_str = ''.join(keep_letters(x) for x in out_str)
-    out_str = out_str.upper()
-    out_str = ' '.join(out_str.split())
-    return out_str
-
-
-def clean_up(applicant, xml_path):
-    '''
-    Clean up the string
-    '''
-    applicant_text = applicant.find(xml_path).text
-    applicant_text = clean_it(applicant_text)
-    # Replace utf-8 characters with their closest ascii
-    applicant_text = unicodedata.normalize('NFKD', applicant_text)
-    applicant_text = applicant_text.encode('ascii', 'ignore')
-    applicant_text = re.sub('\s*LATE\s+OF\s*', '', applicant_text)
-    applicant_text = re.sub('[^a-zA-Z0-9 ]+', '', applicant_text).upper()
-    return applicant_text.strip()
-
-
-def split_first_name(in_name):
-    '''
-    Get middle name out of first name
-    '''
-    holder = in_name.split(' ', 1)
-    if len(holder) > 1:
-        return holder[0], holder[1]
-    else:
-        return in_name, ''
-
-
-def split_name_suffix(in_name):
-    '''
-    Takes the suffix off the last name
-    '''
-    # These are the generational suffixes.
-    suffix_list = [
-        'SR', 'SENIOR', 'I', 'FIRST', '1ST',
-        'JR', 'JUNIOR', 'II', 'SECOND', '2ND',
-        'THIRD', 'III', '3RD',
-        'FOURTH', 'IV', '4TH',
-        'FIFTH', 'V', '5TH',
-        'SIXTH', 'VI', '6TH',
-        'SEVENTH', 'VII', '7TH',
-        'EIGHTH', 'VIII', '8TH',
-        'NINTH' 'IX', '9TH',
-        'TENTH', 'X', '10TH'
-    ]
-    holder = in_name.rsplit(' ', 2)
-    if len(holder) == 1:  # includes empty string
-        return in_name, ''
-    elif len(holder) == 2:
-        if holder[1] in suffix_list:
-            return holder[0], holder[1]
-        else:
-            return in_name, ''
-    elif holder[2] in suffix_list:
-        if holder[1] == 'THE':
-            return holder[0], holder[2]
-        else:
-            last_nm = holder[0] + ' ' + holder[1]
-            return last_nm, holder[2]
-    else:
-        return in_name, ''
 
 
 def get_zip3(applicant_state, applicant_city,
@@ -212,29 +122,32 @@ def get_zip3(applicant_state, applicant_city,
 
 
 def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
+    '''
+    '''
     folder_name = os.path.splitext(os.path.basename(in_file))[0]
-    # Get data in and ready
-    folder_path = cw_dir + '/hold_data/' + folder_name + '/'
-    os.umask(0o777)
-    os.mkdir(folder_path)
-    zipped_file = zipfile.ZipFile(in_file, 'r')
-    zipped_file.extractall(folder_path)
-    zipped_file.close()
-    xml_split = glob.glob(folder_path + '/*.xml')
-    grant_year_gbd = int(grant_year_re.match(folder_name).group(1)[:4])
-    # Run the queries
-    for xmlDoc in xml_split:
-        try:
-            xml_doc_thread(xmlDoc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json)
-        except Exception as e:
-            print(in_file + ': Exception ' + str(e) + ' in xmlDoc ' + xmlDoc)
-            pass
+    try:
+        grant_year_gbd = int(grant_year_re.match(folder_name).group(1)[:4])
+    except Exception as e:
+        print(in_file)
+        raise e
+    folder_name = os.path.basename(in_file).split('.')[0]
+    xml_data_path = hold_folder_path + folder_name
+    with tarfile.open(name=in_file, mode='r:bz2') as tar_file:
+        tar_file.extractall(path=hold_folder_path)
+        xml_split = glob.glob(xml_data_path + '/*.xml')
+        # Run the queries
+        for xmlDoc in xml_split:
+            try:
+                xml_doc_thread(xmlDoc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json, folder_name)
+            except Exception as e:
+                print(in_file + ': Exception ' + str(e) + ' in xmlDoc ' + xmlDoc)
+                pass
     # Clean things up
-    os.system('rm -rf ' + folder_path)
+    shutil.rmtree(xml_data_path)
 
 
 # noinspection PyUnboundLocalVariable
-def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json):
+def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json, folder_name):
     '''
     These are the XML paths we use to extract the data.
     Note: if the path is rel_path_something_XXX then this is a path that is
@@ -244,7 +157,6 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
     All of the patent XML files prior to 2002 were constructed fomr the Google
     Bulk Download *.dat files.
     '''
-    validator = etree.XMLParser(dtd_validation=True)
     if grant_year_gbd > 2004:
         path_patent_number = 'us-bibliographic-data-grant/publication-reference/document-id/doc-number'
         path_app_date = 'us-bibliographic-data-grant/application-reference/document-id/date'
@@ -286,11 +198,12 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         rel_path_assignees_state = 'STA'
     else:
         raise UserWarning('Incorrect grant year: ' + str(grant_year_gbd))
+
     try:
-        if grant_year_gbd > 2001:
-            root = etree.parse(xml_doc, validator)
-        else:
-            root = etree.parse(xml_doc)
+        root = etree.parse(xml_doc, parser=magic_validator)
+    except Exception as e:
+        print('Problem parsing ' + xml_doc + ' in ' + folder_name + ' with error ' + str(e))
+        return
     except Exception as e:
         print(str(e) + ': could not parse patent document ' + str(xml_doc))
         return
@@ -308,7 +221,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         return
     try:  # to get the application date
         app_date = root.find(path_app_date).text
-        app_year = str(datetime.strptime(app_date, date_format).year)
+        app_year = str(datetime.strptime(app_date, dateFormat).year)
     except Exception as e:
         print(str(e) + ': incorrectly formatted application date for patent ' + patent_number + ' in ' + str(xml_doc))
         return
@@ -338,7 +251,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         applicant_counter += 1
         csv_line = [patent_number, uspto_pat_num, app_year, grant_year_gbd]
         try:
-            applicant_city = clean_up(applicant, rel_path_applicants_city)
+            applicant_city = standardize_name_late_of(applicant, rel_path_applicants_city)
             csv_line.append(applicant_city)
         except Exception:
             applicant_city = ''
@@ -354,9 +267,9 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 applicant_sequence_num = applicant.get('sequence')
             except Exception:  # For pre-2005 patents
                 applicant_sequence_num = ''
-            applicant_last_name = clean_up(applicant, rel_path_applicants_last_name)
+            applicant_last_name = standardize_name_late_of(applicant, rel_path_applicants_last_name)
             applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-            applicant_first_name = clean_up(applicant, rel_path_applicants_first_name)
+            applicant_first_name = standardize_name_late_of(applicant, rel_path_applicants_first_name)
             applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
             csv_line.append(applicant_sequence_num)
             csv_line.append(applicant_counter)
@@ -370,7 +283,8 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         if not possible_zip3s:  # Didn't find a zip3?
             possible_zip3s.add('')  # We'll at least have the city/state
         # ## Yes this should be ASCII
-        csv_file = codecs.open('./out_data/zip3s_' + app_year + '.csv', 'a', 'ascii')
+        out_csv_file = out_folder_path + 'zip3s_' + app_year + '.csv'
+        csv_file = codecs.open(out_csv_file, 'a', 'ascii')
         csv_writer = csv.writer(csv_file)
         # Write results
         for new_zip3 in possible_zip3s:
@@ -402,7 +316,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             applicant_counter += 1
             csv_line = [patent_number, uspto_pat_num, app_year, grant_year_gbd]
             try:
-                applicant_city = clean_up(applicant, rel_path_inventors_city)
+                applicant_city = standardize_name_late_of(applicant, rel_path_inventors_city)
                 csv_line.append(applicant_city)
             except Exception:
                 applicant_city = ''
@@ -418,9 +332,9 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                     applicant_sequence_num = applicant.get('sequence')
                 except Exception:  # For pre-2005 patents
                     applicant_sequence_num = ''
-                applicant_last_name = clean_up(applicant, rel_path_inventors_last_name)
+                applicant_last_name = standardize_name_late_of(applicant, rel_path_inventors_last_name)
                 applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-                applicant_first_name = clean_up(applicant, rel_path_inventors_first_name)
+                applicant_first_name = standardize_name_late_of(applicant, rel_path_inventors_first_name)
                 applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
                 csv_line.append(applicant_sequence_num)
                 csv_line.append(applicant_counter)
@@ -434,7 +348,8 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             if not possible_zip3s:  # Didn't find a zip3?
                 possible_zip3s.add('')  # We'll at least have the city/state
             # ## Yes this should be ASCII
-            csv_file = codecs.open('./out_data/zip3s_' + app_year + '.csv', 'a', 'ascii')
+            out_csv_file = out_folder_path + 'zip3s_' + app_year + '.csv'
+            csv_file = codecs.open(out_csv_file, 'a', 'ascii')
             csv_writer = csv.writer(csv_file)
             # Write results
             for new_zip3 in possible_zip3s:

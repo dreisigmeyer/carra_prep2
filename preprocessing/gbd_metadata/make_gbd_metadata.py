@@ -7,7 +7,6 @@ from preprocessing.gbd_metadata.src.inventor_names import create_inventor_json
 import sys
 # import xmltodict
 
-CLOSE_CITY_SPELLINGS = {}
 xml_files = sys.argv[1]
 THIS_DIR = os.path.dirname(__file__)
 
@@ -27,7 +26,8 @@ def init_close_city_spellings(zip_file, city_file):
     '''
     Creates CLOSE_CITY_SPELLINGS
     '''
-    global CLOSE_CITY_SPELLINGS
+    CLOSE_CITY_SPELLINGS = {}
+    # global CLOSE_CITY_SPELLINGS
     with open(zip_file) as json_data:
         zip3_json = json.load(json_data)
     with open(city_file) as json_data:

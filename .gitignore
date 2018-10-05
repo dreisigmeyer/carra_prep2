@@ -7,9 +7,6 @@ nohup*
 *~
 *.xml
 *.json
-!cityMisspellings.json
-!zip3_cities.json
-!close_city_spellings.json
 *.dat
 *.csv
 !free-zipcode-database.csv
