@@ -23,10 +23,10 @@ import os
 from preprocessing.shared_python_code.process_text import clean_patnum
 from preprocessing.shared_python_code.process_text import dateFormat
 from preprocessing.shared_python_code.process_text import grant_year_re
+from preprocessing.shared_python_code.process_text import clean_up_inventor_name
+from preprocessing.shared_python_code.process_text import split_first_name
+from preprocessing.shared_python_code.process_text import split_name_suffix
 from preprocessing.shared_python_code.xml_paths import magic_validator
-from preprocessing.shared_python_code.xml_paths import standardize_name_late_of
-from preprocessing.shared_python_code.xml_paths import split_first_name
-from preprocessing.shared_python_code.xml_paths import split_name_suffix
 import re
 import shutil
 import tarfile
@@ -36,7 +36,7 @@ from lxml import etree
 
 THIS_DIR = os.path.dirname(__file__)
 hold_folder_path = THIS_DIR + '/hold_data/'
-out_folder_path = THIS_DIR + '../out_data/'
+out_folder_path = THIS_DIR + '/../out_data/'
 # pat_num_re = re.compile(r'([A-Z]*)0*([0-9]+)')
 '''
 CLOSE_CITY_SPELLINGS is a dictionary of zips of cities in the same state with a similar name.  It includes the
@@ -59,7 +59,7 @@ def get_zip3(applicant_state, applicant_city,
     possible_cities = [applicant_city]
     cleaned_cities = cleaned_cities_json.get(applicant_state)
     if cleaned_cities:
-        for hold_city, spellings in cleaned_cities.iteritems():
+        for hold_city, spellings in cleaned_cities.items():
             if hold_city not in possible_cities:
                 if applicant_city[:20] in spellings:
                     possible_cities.append(hold_city)
@@ -77,7 +77,7 @@ def get_zip3(applicant_state, applicant_city,
             continue
         CLOSE_CITY_SPELLINGS[applicant_state][alias] = set()  # this isn't there
         if city_names:  # this may be a new misspelling, which we're going to check for now
-            for city, zips in city_names.iteritems():
+            for city, zips in city_names.items():
                 str_match = SeqMatcher(None, alias, city)
                 if str_match.ratio() >= 0.9:  # good enough match
                     CLOSE_CITY_SPELLINGS[applicant_state][alias].update(zips)
@@ -251,7 +251,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         applicant_counter += 1
         csv_line = [patent_number, uspto_pat_num, app_year, grant_year_gbd]
         try:
-            applicant_city = standardize_name_late_of(applicant, rel_path_applicants_city)
+            applicant_city = clean_up_inventor_name(applicant, rel_path_applicants_city)
             csv_line.append(applicant_city)
         except Exception:
             applicant_city = ''
@@ -267,24 +267,24 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                 applicant_sequence_num = applicant.get('sequence')
             except Exception:  # For pre-2005 patents
                 applicant_sequence_num = ''
-            applicant_last_name = standardize_name_late_of(applicant, rel_path_applicants_last_name)
+            applicant_last_name = clean_up_inventor_name(applicant, rel_path_applicants_last_name)
             applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-            applicant_first_name = standardize_name_late_of(applicant, rel_path_applicants_first_name)
+            applicant_first_name = clean_up_inventor_name(applicant, rel_path_applicants_first_name)
             applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
             csv_line.append(applicant_sequence_num)
             csv_line.append(applicant_counter)
             csv_line.extend((applicant_last_name, applicant_suffix, applicant_first_name, applicant_middle_name))
             applicant_last_name = applicant_last_name + ' ' + applicant_suffix  # For possible_zip3s call below
-        except Exception:  # something's wrong so go to the next applicant
+        except Exception as e:  # something's wrong so go to the next applicant
+            print(str(e) + ': in ' + str(xml_doc))
             continue
         possible_zip3s = get_zip3(applicant_state, applicant_city,
                                   zip3_json, cleaned_cities_json, inventor_names_json,
                                   applicant_last_name, applicant_first_name, applicant_middle_name)
         if not possible_zip3s:  # Didn't find a zip3?
             possible_zip3s.add('')  # We'll at least have the city/state
-        # ## Yes this should be ASCII
         out_csv_file = out_folder_path + 'zip3s_' + app_year + '.csv'
-        csv_file = codecs.open(out_csv_file, 'a', 'ascii')
+        csv_file = codecs.open(out_csv_file, 'a')
         csv_writer = csv.writer(csv_file)
         # Write results
         for new_zip3 in possible_zip3s:
@@ -316,7 +316,7 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
             applicant_counter += 1
             csv_line = [patent_number, uspto_pat_num, app_year, grant_year_gbd]
             try:
-                applicant_city = standardize_name_late_of(applicant, rel_path_inventors_city)
+                applicant_city = clean_up_inventor_name(applicant, rel_path_inventors_city)
                 csv_line.append(applicant_city)
             except Exception:
                 applicant_city = ''
@@ -332,9 +332,9 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                     applicant_sequence_num = applicant.get('sequence')
                 except Exception:  # For pre-2005 patents
                     applicant_sequence_num = ''
-                applicant_last_name = standardize_name_late_of(applicant, rel_path_inventors_last_name)
+                applicant_last_name = clean_up_inventor_name(applicant, rel_path_inventors_last_name)
                 applicant_last_name, applicant_suffix = split_name_suffix(applicant_last_name)
-                applicant_first_name = standardize_name_late_of(applicant, rel_path_inventors_first_name)
+                applicant_first_name = clean_up_inventor_name(applicant, rel_path_inventors_first_name)
                 applicant_first_name, applicant_middle_name = split_first_name(applicant_first_name)
                 csv_line.append(applicant_sequence_num)
                 csv_line.append(applicant_counter)
@@ -347,9 +347,8 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
                                       applicant_last_name, applicant_first_name, applicant_middle_name)
             if not possible_zip3s:  # Didn't find a zip3?
                 possible_zip3s.add('')  # We'll at least have the city/state
-            # ## Yes this should be ASCII
             out_csv_file = out_folder_path + 'zip3s_' + app_year + '.csv'
-            csv_file = codecs.open(out_csv_file, 'a', 'ascii')
+            csv_file = codecs.open(out_csv_file, 'a')
             csv_writer = csv.writer(csv_file)
             # Write results
             for new_zip3 in possible_zip3s:
