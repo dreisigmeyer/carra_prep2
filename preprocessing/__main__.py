@@ -6,6 +6,6 @@ import sys
 xml_files = sys.argv[1]
 NUMBER_OF_PROCESSES = int(sys.argv[2])
 path_to_json = sys.argv[3]
-make_gbd_metadata(xml_files)
+# make_gbd_metadata(xml_files)
 make_patent_metadata(xml_files, NUMBER_OF_PROCESSES)
-make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json)
+# make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json)
