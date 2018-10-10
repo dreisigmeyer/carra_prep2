@@ -6,6 +6,7 @@ from multiprocessing import Pool
 import os
 from preprocessing.shared_python_code.process_text import clean_patnum
 from preprocessing.shared_python_code.process_text import dateFormat
+from preprocessing.shared_python_code.process_text import get_assignee_info
 from preprocessing.shared_python_code.process_text import grant_year_re
 from preprocessing.shared_python_code.utility_functons import split_seq
 from preprocessing.shared_python_code.xml_paths import magic_validator
@@ -80,6 +81,7 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
     path_assignees = all_xml_paths[7]
     rel_path_inventors_state = all_xml_paths[8]
     rel_path_applicants_state = all_xml_paths[8]
+    rel_path_assg_orgname = all_xml_paths[9]
 
     try:  # to get patent number
         xml_patent_number = root.find(path_patent_number).text
@@ -100,6 +102,7 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
         number_assignees = 0
     else:
         number_assignees = len(assignees)
+        first_orgname = get_assignee_info(assignees[0], rel_path_assg_orgname)
     # US inventors?
     find_a_us_inventor(path_applicants_alt1, path_applicants_alt2, rel_path_applicants_state)
     if grant_year_GBD >= 2005:  # USPTO changing their way of entering information
@@ -110,6 +113,7 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
     csv_line.append(appYear)
     csv_line.append(number_assignees)
     csv_line.append(us_inventor)
+    csv_line.append(first_orgname)
     csv_writer.writerow(csv_line)
 
 
