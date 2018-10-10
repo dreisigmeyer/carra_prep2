@@ -100,6 +100,7 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
     assignees = root.findall(path_assignees)
     if not assignees:  # Self-assigned
         number_assignees = 0
+        first_orgname = ''
     else:
         number_assignees = len(assignees)
         first_orgname = get_assignee_info(assignees[0], rel_path_assg_orgname)
