@@ -22,10 +22,11 @@ def make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json):
         cities_dict = json.load(json_data)
     with open(path_to_json + '/inventors.json') as json_data:
         inventors_dict = json.load(json_data)
+    close_city_spellings = '/close_city_spellings.json'
     procs = []
     for chunk in files_list:
         p = Process(
             target=xml_parser.assign_zip3,
-            args=(chunk, path_to_json, zips_dict, cities_dict, inventors_dict,))
+            args=(chunk, path_to_json, close_city_spellings, zips_dict, cities_dict, inventors_dict,))
         procs.append(p)
         p.start()
