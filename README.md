@@ -35,8 +35,8 @@ the entire process that follows can be run with the convenience script
 * The outputs in **outputs/for_carra/** are post-processed and then sent to CARRA for PIKing.
 * The file _metadata.csv_ in **outputs/csv_output/** is used later for triangulation.
 * From **outputs/json_output** the files
-_zip3\_cities.json_,
-_cityMispellings.json_,
+_city\_state\_to\_zip3.json_,
+_city\_mispellings.json_,
 _inventors.json_ and
 _close_city_spellings.json_
 are also used later.
