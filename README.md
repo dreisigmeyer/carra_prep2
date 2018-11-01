@@ -31,7 +31,7 @@ The code was run with a standard Anaconda Python 3 environment (https://www.anac
 ## Running the code
 After getting the data and setting up the Python environment,
 the entire process that follows can be run with the convenience script  
-`nohup ./doitall.sh &`  
+`nohup ./doitall.sh number_of_threads_to_use &`  
 * The outputs in **outputs/for_carra/** are post-processed and then sent to CARRA for PIKing.
 * The file _metadata.csv_ in **outputs/csv_output/** is used later for triangulation.
 * From **outputs/json_output** the files
