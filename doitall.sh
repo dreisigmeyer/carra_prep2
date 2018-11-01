@@ -3,7 +3,7 @@
 # The get_uspto_data.sh files should be executed independently and
 # then verified that all of the files were downloaded correctly.
 
-NUM_PY_THREADS=4
+NUM_PY_THREADS=$1
 PATH_TO_JSON=`dirname $(readlink -f $0)`
 # create the 1976-2001 XML files
 cd dat_to_xml
