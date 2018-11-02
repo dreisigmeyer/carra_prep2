@@ -13,6 +13,9 @@ nohup*
 !infobox_postalcodes_en.csv
 !post_office_zips.csv
 !sparql_query_results.csv
+!abbreviations.csv
+!additional_zips.csv
+!city_misspellings.csv
 INV_COUNTY_*.TXT
 INVENTOR_*.TXT
 __pycache__/
