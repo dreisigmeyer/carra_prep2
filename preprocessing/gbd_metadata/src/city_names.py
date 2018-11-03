@@ -68,8 +68,8 @@ def create_city_json(working_dir):
     '''
     uspto_data_path = os.path.join(working_dir, 'data/uspto_data/')
     user_data_path = os.path.join(working_dir, 'data/user_data/')
-    raw_data = glob.glob(uspto_data_path + 'INVENTOR_*')[0]
-    clean_data = glob.glob(uspto_data_path + 'INV_COUNTY_*')[0]
+    raw_data = glob.glob(uspto_data_path + 'INVENTOR_*.TXT')[0]
+    clean_data = glob.glob(uspto_data_path + 'INV_COUNTY_*.TXT')[0]
     user_data = glob.glob(user_data_path + 'city_misspellings.csv')[0]
     with open(user_data) as user_file:
         reader = csv.reader(user_file)
