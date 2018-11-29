@@ -25,8 +25,10 @@
 	**dat_to_xml/dat_files** and 
 	**xml_rewrite/rewriter/raw_xml_files**.
 
+
 ## Setting up the Python environment
 The code was run with a standard Anaconda Python 3 environment (https://www.anaconda.com).
+
 
 ## Running the code
 After getting the data and setting up the Python environment,
@@ -42,6 +44,7 @@ _close_city_spellings.json_
 are also used later.
 * **outputs/xml_output** contains the XML data where we have **xml_with_inventors/** and
 **xml_without_inventors/**.
+
 
 ## The individual pieces of the code
 1.	See the _README.md_ in **dat_to_xml**.  

@@ -49,28 +49,6 @@ def init_close_city_spellings(zip_file, city_file):
         return os.path.abspath(json_file.name)
 
 
-# def zips_xml_to_json(xml_file, json_file):
-#     '''
-#     This is to change the XML file to a JSON
-#     '''
-#     with open(xml_file) as f:
-#         zips = xmltodict.parse(f.read())
-#     zip_dict = dict()
-#     for state in zips['states']['state']:
-#         abbrev = state['@abbrev']
-#         zip_dict[abbrev] = dict()
-#         for city in state['zip3']:
-#             cty = city['@city']
-#             zip = city['#text']
-#             if cty in zip_dict[abbrev]:
-#                 zip_dict[abbrev][cty].append(zip)
-#             else:
-#                 zip_dict[abbrev][cty] = []
-#                 zip_dict[abbrev][cty].append(zip)
-#     with open(json_file, 'w') as fp:
-#         json.dump(zip_dict, fp, indent=8, sort_keys=True)
-
-
 def make_gbd_metadata(xml_files):
     '''
     '''

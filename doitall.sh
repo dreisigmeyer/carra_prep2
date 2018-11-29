@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# The get_uspto_data.sh files should be executed independently and
-# then verified that all of the files were downloaded correctly.
+# The get_uspto_data.sh files in dat_to_xml and xml_rewrite
+# should be executed independently and then verified that all 
+# of the files were downloaded correctly.
+
+# The commandline argument gives the number of threads to run.
 
 NUM_PY_THREADS=$1
 PATH_TO_JSON=`dirname $(readlink -f $0)`
