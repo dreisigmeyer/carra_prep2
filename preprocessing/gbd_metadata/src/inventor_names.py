@@ -10,11 +10,6 @@ import shutil
 import tarfile
 
 INVENTORS_DICT = dict()
-# magic_validator = etree.XMLParser(
-#     dtd_validation=False,
-#     resolve_entities=False,
-#     encoding='utf-8',
-#     recover=True)
 
 
 def add_to_inventors_dict(ln, fn, mn, city, state):

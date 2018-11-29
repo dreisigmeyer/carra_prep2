@@ -5,15 +5,13 @@ from preprocessing.gbd_metadata.src.city_names import create_city_json
 from preprocessing.gbd_metadata.src.city_state_to_zip3 import create_zip3_mapping
 from preprocessing.gbd_metadata.src.inventor_names import create_inventor_json
 import sys
-# import xmltodict
 
 xml_files = sys.argv[1]
 THIS_DIR = os.path.dirname(__file__)
 
 
 class SetEncoder(json.JSONEncoder):
-    '''
-    To export the sets in CLOSE_CITY_SPELLINGS.
+    '''To export the sets in CLOSE_CITY_SPELLINGS.
     '''
 
     def default(self, obj):
@@ -23,8 +21,10 @@ class SetEncoder(json.JSONEncoder):
 
 
 def init_close_city_spellings(zip_file, city_file):
-    '''
-    Creates CLOSE_CITY_SPELLINGS
+    '''Creates CLOSE_CITY_SPELLINGS
+
+    zip_file -- JSON file of city+state to zip3s
+    city_file -- JSON file of aliases/misspellings of city names
     '''
     CLOSE_CITY_SPELLINGS = {}
     # global CLOSE_CITY_SPELLINGS
@@ -50,7 +50,9 @@ def init_close_city_spellings(zip_file, city_file):
 
 
 def make_gbd_metadata(xml_files):
-    '''
+    '''Generates the patent metadata from the USPTO XML files
+
+    xml_files -- path to XML files
     '''
     city_file = create_city_json(THIS_DIR)
     create_inventor_json(xml_files, THIS_DIR)
