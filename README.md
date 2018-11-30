@@ -66,7 +66,7 @@ are also used later.
 	_close_city_spellings.json_
 	> This doesn't depend on any other piece of the code.  
 	
-	The functions provided are:
+	The class and functions provided in **make_gdb_metadata.py** are:
 ```
 SetEncoder(json.JSONEncoder):
 	To export the sets in CLOSE_CITY_SPELLINGS.
@@ -84,6 +84,39 @@ make_gbd_metadata(xml_files):
 
 	xml_files -- path to XML files
 ```
+	The functions provided in **src/city_names.py** are:
+```
+add_to_inventors_dict(prdn, inv_seq, state, city, alias=False):
+	Add city misspelling information to global dictionary
+
+	prdn -- patent number
+	inv_seq -- inventor sequence number
+	state -- state the city is located in
+	city -- city name
+	alias -- find an alternate spelling of city (default False)?
+```
+```
+add_to_cities_dict(state, city, alias):
+	Add city misspelling information to global dictionary
+
+	state -- state the city is located in
+	city -- city name
+	alias -- alternate spelling of city
+```
+```
+create_city_json(working_dir):
+	Maps state+city to potential aliases/misspellings of the city name
+
+	working_dir -- path to input data
+```
+	The functions provided in **src/city_state_to_zip3.py** are:
+```
+
+```
+	The functions provided in **src/inventor_names.py** are:
+```
+
+```
 -	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
 	* correct any misspellings of the city and/or state;
@@ -91,8 +124,12 @@ make_gbd_metadata(xml_files):
 	* attach zip3s to the inventors' cities.  
 	The resulting files in **outputs/for_carra/** are post-processed and then sent to CARRA for 
 	PIKing.  
-	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.
+	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.  
 
+	The functions provided are:
+```
+
+```
 -	**patent_metadata** collects some basic information about each patent.
 	The final **outputs/csv_output/prdn_metadata.csv** file is used later for triangulation.  
 	> This depends on the output of **dat_to_xml** and **xml_rewrite**.

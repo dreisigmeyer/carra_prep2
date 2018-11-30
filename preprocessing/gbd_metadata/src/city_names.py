@@ -12,8 +12,13 @@ INVENTORS_DICT = dict()
 
 
 def add_to_inventors_dict(prdn, inv_seq, state, city, alias=False):
-    '''
-    Add city misspelling information to global dictionary
+    '''Add city misspelling information to global dictionary
+
+    prdn -- patent number
+    inv_seq -- inventor sequence number
+    state -- state the city is located in
+    city -- city name
+    alias -- find an alternate spelling of city (default False)?
     '''
     global INVENTORS_DICT
     if not prdn or not inv_seq or not state or not city:
@@ -40,8 +45,11 @@ def add_to_inventors_dict(prdn, inv_seq, state, city, alias=False):
 
 
 def add_to_cities_dict(state, city, alias):
-    '''
-    Add city misspelling information to global dictionary
+    '''Add city misspelling information to global dictionary
+
+    state -- state the city is located in
+    city -- city name
+    alias -- alternate spelling of city
     '''
     global CITIES_DICT
     if not state or not city or not alias:
@@ -64,7 +72,9 @@ def add_to_cities_dict(state, city, alias):
 
 
 def create_city_json(working_dir):
-    '''
+    '''Maps state+city to potential aliases/misspellings of the city name
+
+    working_dir -- path to input data
     '''
     uspto_data_path = os.path.join(working_dir, 'data/uspto_data/')
     user_data_path = os.path.join(working_dir, 'data/user_data/')
