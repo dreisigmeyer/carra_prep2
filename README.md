@@ -65,6 +65,7 @@ are also used later.
 	first and middle names and  
 	_close_city_spellings.json_
 	> This doesn't depend on any other piece of the code.
+	The functions provided are:
 ```
 SetEncoder(json.JSONEncoder):
 	To export the sets in CLOSE_CITY_SPELLINGS.
