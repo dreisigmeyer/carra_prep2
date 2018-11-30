@@ -66,7 +66,7 @@ are also used later.
 	_close_city_spellings.json_
 	> This doesn't depend on any other piece of the code.  
 	
-	The class and functions provided in **make_gdb_metadata.py** are:
+The class and functions provided in **make_gdb_metadata.py** are:
 ```
 SetEncoder(json.JSONEncoder):
 	To export the sets in CLOSE_CITY_SPELLINGS.
@@ -84,7 +84,8 @@ make_gbd_metadata(xml_files):
 
 	xml_files -- path to XML files
 ```
-	The functions provided in **src/city_names.py** are:
+
+The functions provided in **src/city_names.py** are:
 ```
 add_to_inventors_dict(prdn, inv_seq, state, city, alias=False):
 	Add city misspelling information to global dictionary
@@ -109,11 +110,13 @@ create_city_json(working_dir):
 
 	working_dir -- path to input data
 ```
-	The functions provided in **src/city_state_to_zip3.py** are:
+
+The functions provided in **src/city_state_to_zip3.py** are:
 ```
 
 ```
-	The functions provided in **src/inventor_names.py** are:
+
+The functions provided in **src/inventor_names.py** are:
 ```
 
 ```
