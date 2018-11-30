@@ -67,14 +67,14 @@ ST_ABBREVS = {
 
 
 def create_abbreviations(line):
-    '''
-    Expands abbreviations or creates them
+    '''Expands abbreviations or creates them
+
+    line -- string to work on
     '''
     global STATE_CITY_ZIP3
 
     def insert_new_city(abbrev_re, word, state, city):
-        '''
-        Actually inserts the new abbreviations correctly
+        '''Actually inserts the new abbreviations correctly
         '''
         global STATE_CITY_ZIP3
         if re.search(abbrev_re, city):
@@ -98,8 +98,10 @@ def create_abbreviations(line):
 
 
 def csv_reader_skip_headers(in_file, delimiter=','):
-    '''
-    Returnes a csv reader skipping over the header line.
+    '''Returnes a csv reader skipping over the header line.
+
+    in_file -- name of the file to read in
+    delimiter -- (Default ',')
     '''
     f_csv = csv.reader(in_file, delimiter=delimiter)
     next(f_csv)
@@ -107,7 +109,9 @@ def csv_reader_skip_headers(in_file, delimiter=','):
 
 
 def process_state_html(file):
-    '''
+    '''Gets zips out of the USPS HTML
+
+    file -- file name to process
     '''
     path_info = "/body/table/tr/td/table/tr/td/table/tr/td//a[@alt]/../.."
     parser = etree.HTMLParser()
@@ -123,8 +127,9 @@ def process_state_html(file):
 
 
 def read_zcta_line(line):
-    '''
-    This maps the geoid to zip3s.
+    '''This maps the geoid to zip3s.
+
+    line -- string to process
     '''
     global GEOID_TO_ZIP3
     geoid, zcta = line[4], line[0]
@@ -133,8 +138,9 @@ def read_zcta_line(line):
 
 
 def read_states_line(line):
-    '''
-    This collects together state information.
+    '''This collects together state information.
+
+    line -- string to process
     '''
     global GEOID_INFO
     global FIPS_ZIP3S
@@ -155,7 +161,9 @@ def read_states_line(line):
 
 
 def read_sparql_line(line):
-    '''
+    '''Reads in a SPARQL query result
+
+    line -- string to process
     '''
     zip3, city, state = line[0], line[1], line[2]
     city = standardize_name_cdp(city)
@@ -173,7 +181,9 @@ def read_sparql_line(line):
 
 
 def read_dbpedia_line(line):
-    '''
+    '''Reads in a line from the DBPedia dataset
+
+    line -- string to process
     '''
     city, state, zip3 = line[0], line[1], line[2]
     city = standardize_name_cdp(city)
@@ -191,7 +201,9 @@ def read_dbpedia_line(line):
 
 
 def read_other_line(line):
-    '''
+    '''Generic processing of a string
+
+    line -- string to process
     '''
     city, abbrev, zip3 = line[0], line[1], line[2]
     zip3 = zip3[:3]
@@ -200,8 +212,9 @@ def read_other_line(line):
 
 
 def read_allname_line(line):
-    '''
-    This collects alternate names for each geoid.
+    '''This collects alternate names for each geoid.
+
+    line -- string to process
     '''
     global GEOID_INFO
     f_id, nm = line[0], line[1]
@@ -214,8 +227,7 @@ def read_allname_line(line):
 
 
 def state_city_to_zip3():
-    '''
-    Creates the city+state to zip3 mapping.
+    '''Creates the city+state to zip3 mapping.
     '''
     for geoid in GEOID_INFO:
         state = GEOID_INFO[geoid]['state']
@@ -233,8 +245,11 @@ def state_city_to_zip3():
 
 
 def update_zip3_mapping(state, name, zip3):
-    '''
-    Add new zip3 to dictionary
+    '''Add new zip3 to dictionary
+
+    state -- state the zip3 is in
+    name -- city name of the zip3
+    zip3 -- the zip3
     '''
     global STATE_CITY_ZIP3
     if state in STATE_CITY_ZIP3:
@@ -250,7 +265,9 @@ def update_zip3_mapping(state, name, zip3):
 
 
 def create_zip3_mapping(working_dir):
-    '''
+    '''Main programm to create the city+state to zip3 mappings
+
+    working_dir -- location of data files
     '''
     usgs_data_path = os.path.join(working_dir, 'data/usgs_data/')
     states_data_path = os.path.join(usgs_data_path, 'states/')

@@ -113,7 +113,77 @@ create_city_json(working_dir):
 
 The functions provided in **src/city_state_to_zip3.py** are:
 ```
+create_abbreviations(line):
+	Expands abbreviations or creates them
 
+	line -- string to work on
+```
+```
+csv_reader_skip_headers(in_file, delimiter=','):
+	Returnes a csv reader skipping over the header line.
+
+	in_file -- name of the file to read in
+	delimiter -- (Default ',')
+```
+```
+process_state_html(file):
+	Gets zips out of the USPS HTML
+
+	file -- file name to process
+```
+```
+read_zcta_line(line):
+	This maps the geoid to zip3s.
+
+	line -- string to process
+```
+```
+read_states_line(line):
+	This collects together state information.
+
+	line -- string to process
+```
+```
+read_sparql_line(line):
+	Reads in a SPARQL query result
+
+	line -- string to process
+```
+```
+read_dbpedia_line(line):
+	Reads in a line from the DBPedia dataset
+
+	line -- string to process
+```
+```
+read_other_line(line):
+	Generic processing of a string
+
+	line -- string to process
+```
+```
+read_allname_line(line):
+	This collects alternate names for each geoid.
+
+	line -- string to process
+```
+```
+state_city_to_zip3():
+	Creates the city+state to zip3 mapping.
+```
+```
+update_zip3_mapping(state, name, zip3):
+	Add new zip3 to dictionary
+
+	state -- state the zip3 is in
+	name -- city name of the zip3
+	zip3 -- the zip3
+```
+```
+create_zip3_mapping(working_dir):
+	Main programm to create the city+state to zip3 mappings
+
+	working_dir -- location of data files
 ```
 
 The functions provided in **src/inventor_names.py** are:
