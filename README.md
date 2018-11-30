@@ -64,7 +64,7 @@ are also used later.
 	_inventors.json_ : contains all city+state combinations for inventors base on last, 
 	first and middle names and  
 	_close_city_spellings.json_
-	> This doesn't depend on any other piece of the code.
+	> This doesn't depend on any other piece of the code.  
 	The functions provided are:
 ```
 SetEncoder(json.JSONEncoder):
@@ -83,7 +83,6 @@ make_gbd_metadata(xml_files):
 
 	xml_files -- path to XML files
 ```
-
 -	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
 	* correct any misspellings of the city and/or state;
