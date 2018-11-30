@@ -65,6 +65,23 @@ are also used later.
 	first and middle names and  
 	_close_city_spellings.json_
 	> This doesn't depend on any other piece of the code.
+```
+SetEncoder(json.JSONEncoder):
+	To export the sets in CLOSE_CITY_SPELLINGS.
+```
+```
+init_close_city_spellings(zip_file, city_file):
+	Creates CLOSE_CITY_SPELLINGS
+
+	zip_file -- JSON file of city+state to zip3s
+	city_file -- JSON file of aliases/misspellings of city names
+```
+```
+make_gbd_metadata(xml_files):
+	Generates the patent metadata from the USPTO XML files
+
+	xml_files -- path to XML files
+```
 
 -	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
