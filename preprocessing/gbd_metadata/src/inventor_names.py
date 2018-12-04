@@ -13,8 +13,13 @@ INVENTORS_DICT = dict()
 
 
 def add_to_inventors_dict(ln, fn, mn, city, state):
-    '''
-    Add applicant information to global dictionary
+    '''Add applicant information to global dictionary
+
+    ln -- inventor's last name
+    fn -- inventor's first name
+    mn -- inventor's middle name
+    city -- inventor's city on the patent
+    state -- inventor's state on the patent
     '''
     global INVENTORS_DICT
     if not state or not ln or not fn or not city:
@@ -46,6 +51,12 @@ def add_to_inventors_dict(ln, fn, mn, city, state):
 
 
 def create_inventor_json(directories, working_dir):
+    '''Creates the JSON file of inventor information that is used for
+    auto-correcting inventor city+state information
+
+    directories -- location of bz2 XML files
+    working_dir -- location where intermediate working files should be put
+    '''
     hold_data_path = os.path.join(working_dir, 'data/xml_data/')
     grant_year_re = re.compile('i?pgb([0-9]{4})')
     xml_directories = glob.glob(directories + '/*.bz2')
@@ -65,7 +76,10 @@ def create_inventor_json(directories, working_dir):
 
 
 def xml_to_json_doc(xml_doc, grant_year):
-    '''
+    '''Takes information from the XML files and places it into JSON format
+
+    xml_doc -- name of the XML file that's being processed
+    grant_year -- grant year of patent
     '''
     _, _, path_apps_alt1, path_apps_alt2, path_invs_alt1, path_invs_alt2, _ = inv_xml_paths(grant_year)
     root = etree.parse(xml_doc, parser=magic_validator)

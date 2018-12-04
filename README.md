@@ -56,7 +56,7 @@ are also used later.
 3.	The **preprocessing** module collects together patent metadata and prepares the dat
 	XML files for sending to CARRA.
 	Many of the intermediate files may be of value as well.
-- 	**gbd_metadata** is run to generate JSON files
+-	**gbd_metadata** is run to generate JSON files
 	for attaching zip3s, and correcting city-state and inventor information.
 	The files in **outputs/json_output/** are  
 	_zip3\_cities.json_,  
@@ -188,9 +188,31 @@ create_zip3_mapping(working_dir):
 
 The functions provided in **src/inventor_names.py** are:
 ```
+add_to_inventors_dict(ln, fn, mn, city, state):
+	Add applicant information to global dictionary
 
+	ln -- inventor's last name
+	fn -- inventor's first name
+	mn -- inventor's middle name
+	city -- inventor's city on the patent
+	state -- inventor's state on the patent
 ```
--	**for_carra** prepares the inventor data to be shipped to CARRA for PIKing.
+```
+create_inventor_json(directories, working_dir):
+	Creates the JSON file of inventor information that is used for
+	auto-correcting inventor city+state information
+
+	directories -- location of bz2 XML files
+	working_dir -- location where intermediate working files should be put
+```
+```
+xml_to_json_doc(xml_doc, grant_year):
+	Takes information from the XML files and places it into JSON format
+
+	xml_doc -- name of the XML file that's being processed
+	grant_year -- grant year of patent
+```
+-	**carra_files** prepares the inventor data to be shipped to CARRA for PIKing.
 	In particular, this attempts to:
 	* correct any misspellings of the city and/or state;
 	* assign prior city and states to inventors;
@@ -199,7 +221,7 @@ The functions provided in **src/inventor_names.py** are:
 	PIKing.  
 	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.  
 
-	The functions provided are:
+The functions provided are:
 ```
 
 ```
