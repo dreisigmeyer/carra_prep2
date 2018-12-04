@@ -12,7 +12,11 @@ THIS_DIR = os.path.dirname(__file__)
 
 # Start processing
 def make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json):
-    '''
+    '''Generates the files to be sent to CARRA
+
+    xml_files -- locations of the XML files
+    NUMBER_OF_PROCESSES -- number of Python threads to use
+    path_to_json -- location of JSON files containing city+state and inventor information
     '''
     files = glob.glob(os.path.join(xml_files, "*.bz2"))
     files_list = split_seq(files, NUMBER_OF_PROCESSES)

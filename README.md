@@ -221,10 +221,21 @@ xml_to_json_doc(xml_doc, grant_year):
 	PIKing.  
 	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.  
 
-The functions provided are:
+The functions provided in **make_carra_files.py** are:
+```
+make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json):
+	Generates the files to be sent to CARRA
+
+	xml_files -- locations of the XML files
+	NUMBER_OF_PROCESSES -- number of Python threads to use
+	path_to_json -- location of JSON files containing city+state and inventor information
+```
+
+The functions provided in **src/xml_parser.py** are:
 ```
 
 ```
+
 -	**patent_metadata** collects some basic information about each patent.
 	The final **outputs/csv_output/prdn_metadata.csv** file is used later for triangulation.  
 	> This depends on the output of **dat_to_xml** and **xml_rewrite**.
