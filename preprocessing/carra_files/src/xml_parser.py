@@ -22,7 +22,12 @@ out_folder_path = THIS_DIR + '/../out_data/'
 
 
 def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
-    '''
+    '''Prepares things to attach zip3s to inventor names
+
+    in_file -- XML file to process
+    zip3_json -- JSON file of city+state to zip3s
+    cleaned_cities_json -- JSON file of potential city misspellings
+    inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
     '''
     folder_name = os.path.splitext(os.path.basename(in_file))[0]
     grant_year_gbd = int(grant_year_re.match(folder_name).group(1)[:4])
@@ -33,7 +38,7 @@ def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
         xml_split = glob.glob(xml_data_path + '/*.xml')
         for xmlDoc in xml_split:
             try:
-                xml_doc_thread(xmlDoc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json, folder_name)
+                xml_doc_thread(xmlDoc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json)
             except Exception as e:
                 print(xmlDoc + ': ' + str(e))
                 pass
@@ -42,9 +47,21 @@ def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
 
 def write_csv_line(
         root, path_alt1, path_alt2,
-        prdn, uspto_prdn, app_year, grant_year, assg_st, xml_doc,
+        prdn, uspto_prdn, app_year, grant_year, assg_st,
         zip3_json, cleaned_cities_json, inventor_names_json):
-    '''
+    '''Writes the inventor information to the output file for CARRA
+
+    root -- root of the XML document
+    path_alt1 -- path to inventors
+    path_alt2 -- path to inventors
+    prdn -- patent number
+    uspto_prdn -- patent number in USPTO format
+    app_year -- application year of the patent
+    grant_year -- grant year of the patent
+    assg_st -- assignee state
+    zip3_json -- JSON file of city+state to zip3s
+    cleaned_cities_json -- JSON file of potential city misspellings
+    inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
     '''
     if root.find(path_alt1) is not None:
         path_applicants = path_alt1
@@ -89,9 +106,14 @@ def write_csv_line(
         warnings.warn('Did not try to process every applicant on patent ' + prdn)
 
 
-# noinspection PyUnboundLocalVariable
-def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json, folder_name):
-    '''
+def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json):
+    '''Prepares XML information for writing to a CSV file for CARRA
+
+    xml_doc -- the XML document we're parsing
+    grant_year_gbd -- grant year of the patent
+    zip3_json -- JSON file of city+state to zip3s
+    cleaned_cities_json -- JSON file of potential city misspellings
+    inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
     '''
     xml_paths = carra_xml_paths(grant_year_gbd)
     path_patent_number, path_app_date = xml_paths[0], xml_paths[1]
@@ -117,17 +139,24 @@ def xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inve
         assignee_state.add('')  # we need a non-empty assignee_state below
     write_csv_line(
         root, path_applicants_alt1, path_applicants_alt2,
-        patent_number, uspto_pat_num, app_year, grant_year_gbd, assignee_state, xml_doc,
+        patent_number, uspto_pat_num, app_year, grant_year_gbd, assignee_state,
         zip3_json, cleaned_cities_json, inventor_names_json)
     if grant_year_gbd >= 2005:  # inventor information may not be in the applicant fields
         write_csv_line(
             root, path_inventors_alt1, path_inventors_alt2,
-            patent_number, uspto_pat_num, app_year, grant_year_gbd, assignee_state, xml_doc,
+            patent_number, uspto_pat_num, app_year, grant_year_gbd, assignee_state,
             zip3_json, cleaned_cities_json, inventor_names_json)
 
 
 def assign_zip3(files, path_to_json, close_city_spellings, zip3_json, cleaned_cities_json, inventor_names_json):
-    '''
+    '''Master file that launches the zip3 assignement
+
+    files -- XML files to process
+    path_to_json -- where the JSON data files are located at
+    close_city_spellings -- misspellings of city names
+    zip3_json -- JSON file of city+state to zip3s
+    cleaned_cities_json -- JSON file of potential city misspellings
+    inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
     '''
     global get_zip3
     get_zip3 = initialize_close_city_spelling(path_to_json + close_city_spellings)

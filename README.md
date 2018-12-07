@@ -219,7 +219,7 @@ xml_to_json_doc(xml_doc, grant_year):
 	* attach zip3s to the inventors' cities.  
 	The resulting files in **outputs/for_carra/** are post-processed and then sent to CARRA for 
 	PIKing.  
-	> This depends on the output of **create_GBD_metadata**, **dat_to_xml** and **xml_rewrite**.  
+	> This depends on the output of **gbd_metadata**, **dat_to_xml** and **xml_rewrite**.  
 
 The functions provided in **make_carra_files.py** are:
 ```
@@ -233,7 +233,50 @@ make_carra_files(xml_files, NUMBER_OF_PROCESSES, path_to_json):
 
 The functions provided in **src/xml_parser.py** are:
 ```
+zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
+	Prepares things to attach zip3s to inventor names
 
+	in_file -- XML file to process
+	zip3_json -- JSON file of city+state to zip3s
+	cleaned_cities_json -- JSON file of potential city misspellings
+	inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
+```
+```
+write_csv_line(root, path_alt1, path_alt2, prdn, uspto_prdn, app_year, grant_year, assg_st, zip3_json, cleaned_cities_json, inventor_names_json):
+	Writes the inventor information to the output file for CARRA
+
+	root -- root of the XML document
+	path_alt1 -- path to inventors
+	path_alt2 -- path to inventors
+	prdn -- patent number
+	uspto_prdn -- patent number in USPTO format
+	app_year -- application year of the patent
+	grant_year -- grant year of the patent
+	assg_st -- assignee state
+	zip3_json -- JSON file of city+state to zip3s
+	cleaned_cities_json -- JSON file of potential city misspellings
+	inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
+```
+```
+xml_doc_thread(xml_doc, grant_year_gbd, zip3_json, cleaned_cities_json, inventor_names_json):
+	Prepares XML information for writing to a CSV file for CARRA
+
+	xml_doc -- the XML document we're parsing
+	grant_year_gbd -- grant year of the patent
+	zip3_json -- JSON file of city+state to zip3s
+	cleaned_cities_json -- JSON file of potential city misspellings
+	inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
+```
+```
+assign_zip3(files, path_to_json, close_city_spellings, zip3_json, cleaned_cities_json, inventor_names_json):
+	Master file that launches the zip3 assignement
+
+	files -- XML files to process
+	path_to_json -- where the JSON data files are located at
+	close_city_spellings -- misspellings of city names
+	zip3_json -- JSON file of city+state to zip3s
+	cleaned_cities_json -- JSON file of potential city misspellings
+	inventor_names_json -- JSON file of inventor names to potential prior city+state residencies
 ```
 
 -	**patent_metadata** collects some basic information about each patent.
