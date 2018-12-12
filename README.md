@@ -15,7 +15,7 @@
     run  
     `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INV_COUNTY_*.TXT.bz2`  
     `bzip2 -dk preprocessing/gbd_metadata/data/uspto_data/INVENTOR_*.TXT.bz2`  
-	`bzip2 -dk preprocessing/gbd_metadata/src/zip3Data/usgs_geonames/*.txt.bz2`  
+	`bzip2 -dk preprocessing/gbd_metadata/data/usgs_data/AllNames_*.txt.bz2`  
 	If the bzip files change you'll need to rerun this.
 
 3.	In **dat_to_xml** and **xml_rewrite** run  
