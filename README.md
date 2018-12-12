@@ -282,3 +282,26 @@ assign_zip3(files, path_to_json, close_city_spellings, zip3_json, cleaned_cities
 -	**patent_metadata** collects some basic information about each patent.
 	The final **outputs/csv_output/prdn_metadata.csv** file is used later for triangulation.  
 	> This depends on the output of **dat_to_xml** and **xml_rewrite**.
+The functions provided in **make_patent_metadata.py** are:
+```
+get_info(files):
+	Initializes the environment to process the USPTO XML files and write the information to a CSV file.
+
+	files -- the files to process
+```
+```
+process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
+	Extracts information from a single USPTO XML document and writes it to a CSV file.
+
+	xml_doc -- te XML document to process
+	grant_year_GBD -- grant year of the patent
+	csv_writer -- Python CSV writer
+	folder_name -- folder where xml_doc is located
+```
+```
+make_patent_metadata(xml_files, NUMBER_OF_PROCESSES):
+	Driver function that collects the XML data into CSV files and then concatenates those into a single file.
+
+	xml_files -- the bzip2 XML files
+	NUMBER_OF_PROCESSES -- number of Python threads to use
+```

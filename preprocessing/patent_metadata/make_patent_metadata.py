@@ -20,7 +20,9 @@ out_folder_path = THIS_DIR + '/out_data/'
 
 
 def get_info(files):
-    '''
+    '''Initializes the environment to process the USPTO XML files and write the information to a CSV file.
+
+    files -- the files to process
     '''
     for file in files:
         folder_name = os.path.basename(file).split('.')[0]
@@ -39,7 +41,12 @@ def get_info(files):
 
 
 def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
-    '''
+    '''Extracts information from a single USPTO XML document and writes it to a CSV file.
+
+    xml_doc -- te XML document to process
+    grant_year_GBD -- grant year of the patent
+    csv_writer -- Python CSV writer
+    folder_name -- folder where xml_doc is located
     '''
     us_inventor = 0
     try:
@@ -49,7 +56,11 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
         return
 
     def find_a_us_inventor(path_alt1, path_alt2, rel_path_state):
-        '''
+        '''Determines if there's a US inventor on the patent
+
+        path_alt1 -- XML path to the inventors
+        path_alt2 -- alternate XML path to the inventors
+        rel_path_state -- relative path to the inventor state information
         '''
         nonlocal us_inventor
         path_applicants = ''
@@ -119,7 +130,10 @@ def process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name):
 
 
 def make_patent_metadata(xml_files, NUMBER_OF_PROCESSES):
-    '''
+    '''Driver function that collects the XML data into CSV files and then concatenates those into a single file.
+
+    xml_files -- the bzip2 XML files
+    NUMBER_OF_PROCESSES -- number of Python threads to use
     '''
     files = glob.glob(os.path.join(xml_files, '*.bz2'))
     files_list = split_seq(files, NUMBER_OF_PROCESSES)
