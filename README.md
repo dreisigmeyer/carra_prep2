@@ -1,3 +1,6 @@
+See also the README for **dat_to_xml**, **xml_rewriter** and **shared_python_code**.
+
+
 ## Getting the data
 1.	If you don't have git-lfs you'll need to download:
     * The "All Names" file from the Topical Gazetteers from 
