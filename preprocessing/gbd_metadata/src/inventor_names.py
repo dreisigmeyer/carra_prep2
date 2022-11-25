@@ -65,7 +65,26 @@ def create_inventor_json(directories, working_dir):
         grant_year = int(grant_year_re.match(xml_filename).group(1)[:4])
         hold_directory = hold_data_path + xml_filename
         with tarfile.open(name=xml_directory, mode='r:bz2') as tar_file:
-            tar_file.extractall(path=hold_data_path)
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(tar_file, path=hold_data_path)
             xml_docs = glob.glob(hold_directory + '/*.xml')
             for xml_doc in xml_docs:
                 xml_to_json_doc(xml_doc, grant_year)

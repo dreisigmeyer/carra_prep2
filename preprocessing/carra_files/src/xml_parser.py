@@ -34,7 +34,26 @@ def zip3_thread(in_file, zip3_json, cleaned_cities_json, inventor_names_json):
     folder_name = os.path.basename(in_file).split('.')[0]
     xml_data_path = hold_folder_path + folder_name
     with tarfile.open(name=in_file, mode='r:bz2') as tar_file:
-        tar_file.extractall(path=hold_folder_path)
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(tar_file, path=hold_folder_path)
         xml_split = glob.glob(xml_data_path + '/*.xml')
         for xmlDoc in xml_split:
             try:

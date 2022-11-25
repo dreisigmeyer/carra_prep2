@@ -33,7 +33,26 @@ def get_info(files):
             # Get data in and ready
             xml_data_path = hold_folder_path + folder_name
             with tarfile.open(name=file, mode='r:bz2') as tar_file:
-                tar_file.extractall(path=hold_folder_path)
+                def is_within_directory(directory, target):
+                    
+                    abs_directory = os.path.abspath(directory)
+                    abs_target = os.path.abspath(target)
+                
+                    prefix = os.path.commonprefix([abs_directory, abs_target])
+                    
+                    return prefix == abs_directory
+                
+                def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+                
+                    for member in tar.getmembers():
+                        member_path = os.path.join(path, member.name)
+                        if not is_within_directory(path, member_path):
+                            raise Exception("Attempted Path Traversal in Tar File")
+                
+                    tar.extractall(path, members, numeric_owner=numeric_owner) 
+                    
+                
+                safe_extract(tar_file, path=hold_folder_path)
                 xml_split = glob.glob(xml_data_path + '/*.xml')
                 for xml_doc in xml_split:
                     process_xml_file(xml_doc, grant_year_GBD, csv_writer, folder_name)
